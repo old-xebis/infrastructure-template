@@ -18,6 +18,11 @@ GitLab CI handles static and dynamic environments. Environments are created, upd
 **The project is under active development.**
 
 <!-- omit in toc -->
+## The Goal
+
+The goal is to have GitOps repository utilizing GitLab, MRs (PRs), GitLab CI, and IaC, to automatically handle environments life cycle - its creation, update, configuration, and eventually destroy as well.
+
+<!-- omit in toc -->
 ## Table of Contents
 
 - [Features](#features)
@@ -38,6 +43,13 @@ GitLab CI handles static and dynamic environments. Environments are created, upd
   - [Further Reading](#further-reading)
 
 ## Features
+
+Updates environments:
+
+- On *release* tag runs `prod` environment update stub
+- On `main` branch commit runs `stag` environment update stub
+- On *pre-release* tag runs `test-<tag>` environment update stub
+- On _non-_`main` branch commit runs `dev-<branch>` environment update stub
 
 \#TODO: *Features. Demos and visuals - images, animations, and videos are highly encouraged.*
 

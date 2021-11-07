@@ -8,6 +8,7 @@ default:
 stages:
   - validate
   - deploy
+  - release
 
 lint:
   stage: validate
@@ -23,22 +24,36 @@ lint:
     - PATH="$PATH:/root/go/bin"
     - GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run --all-files
 
-test-full:
-  stage: validate
+deploy-prod:
+  stage: deploy
   script:
-    - echo "$0 ✓ Full test set"
+    - echo "Deploy **production** environment \`prod\` to <https://example.com>"
   rules:
-    - if: $CI_PIPELINE_SOURCE != "schedule"
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
-test-nightly:
-  stage: validate
+deploy-stag:
+  stage: deploy
   script:
-    - echo "$0 ✓ Nightly test set"
+    - echo "Deploy **staging** environment \`stag\` to <https://stag.example.com>"
   rules:
-    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+deploy-test:
+  stage: deploy
+  script:
+    - echo "Deploy **testing/$CI_COMMIT_REF_SLUG** environment \`test-$CI_ENVIRONMENT_SLUG\` to <https://test-$CI_ENVIRONMENT_SLUG.example.com>"
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+
+deploy-dev:
+  stage: deploy
+  script:
+    - echo "Deploy **development/$CI_COMMIT_REF_SLUG** environment \`dev-$CI_ENVIRONMENT_SLUG\` to <https://test-$CI_ENVIRONMENT_SLUG.example.com>"
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
 
 release:
-  stage: deploy
+  stage: release
   script:
     - apt-get update
     - apt-get upgrade -y
