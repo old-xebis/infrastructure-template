@@ -1,91 +1,107 @@
+<!-- omit in toc -->
 # Infrastructure Template
 
-Template for automated GitOps and IaC in a cloud. GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
+![GitHub top language](https://img.shields.io/github/languages/top/xebis/infrastructure-template)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-## Getting started
+![GitHub](https://img.shields.io/github/license/xebis/infrastructure-template)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/xebis/infrastructure-template)
+![GitHub issues](https://img.shields.io/github/issues/xebis/infrastructure-template)
+![GitHub last commit](https://img.shields.io/github/last-commit/xebis/infrastructure-template)
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Template for automated GitOps and IaC in a cloud.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
 
-## Add your files
+**The project is under active development.**
 
-- [ ] [Create](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+<!-- omit in toc -->
+## Table of Contents
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/xebis/infrastructure-template.git
-git branch -M main
-git push -uf origin main
-```
+- [Features](#features)
+- [Installation and Configuration](#installation-and-configuration)
+- [Usage](#usage)
+- [Contributing](#contributing)
+  - [Testing](#testing)
+  - [Operations](#operations)
+- [To-Do list](#to-do-list)
+- [Roadmap](#roadmap)
+- [Credits and Acknowledgments](#credits-and-acknowledgments)
+- [Copyright and Licensing](#copyright-and-licensing)
+- [Changelog and News](#changelog-and-news)
+- [Notes and References](#notes-and-references)
+  - [Dependencies](#dependencies)
+  - [Recommendations](#recommendations)
+  - [Suggestions](#suggestions)
+  - [Further Reading](#further-reading)
 
-## Integrate with your tools
+## Features
 
-- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/integrations/)
+\#TODO: *Features. Demos and visuals - images, animations, and videos are highly encouraged.*
 
-## Collaborate with your team
+## Installation and Configuration
 
-- [ ] [Invite team members and collaborators](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Automatically merge when pipeline succeeds](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/clusters/agent/)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+\#TODO: *Installation and configuration guidance.*
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+\#TODO: *Usage examples.*
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting merge requests to us.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Testing
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+\#TODO: *Testing stack and how to run tests.*
 
-## License
-For open source projects, say how it is licensed.
+### Operations
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+\#TODO: *Operations.*
 
+## To-Do list
+
+- [ ] Replace `shfmt` exact version `v3.3.1` at [.gitlab-ci.yml](.gitlab-ci.yml) with `latest`
+
+\#TODO: *TODO list.*
+
+## Roadmap
+
+- [ ] Speed up CI/CD with a set of Docker images with pre-installed dependencies for each CI/CD stage
+
+\#TODO: *Roadmap.*
+
+## Credits and Acknowledgments
+
+- [Martin Bružina](https://bruzina.cz/) - Author
+
+## Copyright and Licensing
+
+- [MIT License](LICENSE)
+- Copyright © 2021 Martin Bružina
+
+## Changelog and News
+
+- [Changelog](CHANGELOG.md)
+
+## Notes and References
+
+### Dependencies
+
+- [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
+
+\#TODO: *List dependencies here, or delete the section, if none.*
+
+### Recommendations
+
+\#TODO: *List recommended references here, or delete the section.*
+
+### Suggestions
+
+\#TODO: *List suggested references here, or delete the section.*
+
+### Further Reading
+
+\#TODO: *List further reading links here, or delete the section.*

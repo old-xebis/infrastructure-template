@@ -1,0 +1,52 @@
+---
+default:
+  image: ubuntu:latest
+  before_script:
+    - TZ="Europe/Prague"
+    - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+stages:
+  - validate
+  - deploy
+
+lint:
+  stage: validate
+  script:
+    - apt-get update
+    - apt-get upgrade -y
+    - apt-get install --no-install-recommends -y ca-certificates git golang nodejs npm python3-pip shellcheck
+    - pip3 install gitlint pre-commit yamllint
+    - gitlint
+    - tools/check-sanity
+    - npm install -g markdownlint-cli
+    - GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt@v3.3.1
+    - PATH="$PATH:/root/go/bin"
+    - GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run --all-files
+
+test-full:
+  stage: validate
+  script:
+    - echo "$0 ✓ Full test set"
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "schedule"
+
+test-nightly:
+  stage: validate
+  script:
+    - echo "$0 ✓ Nightly test set"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+release:
+  stage: deploy
+  script:
+    - apt-get update
+    - apt-get upgrade -y
+    - apt-get install --no-install-recommends -y curl git npm
+    - curl -sL https://deb.nodesource.com/setup_14.x -o setup_14.sh
+    - bash ./setup_14.sh
+    - apt-get install --no-install-recommends -y nodejs
+    - npm install -g semantic-release @semantic-release/gitlab @semantic-release/github @semantic-release/git @semantic-release/changelog
+    - npx semantic-release
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
