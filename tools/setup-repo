@@ -140,6 +140,30 @@ else
         fi
     fi
 
+    # Install TFLint if it's not present
+    if tflint -v >/dev/null; then
+        echo "$ECHO_PRE_OK tflint is installed"
+    else
+        if curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash; then
+            echo "$ECHO_PRE_INST tflint has been installed"
+        else
+            echo "$ECHO_PRE_ERR tflint installation failed"
+            exit 1
+        fi
+    fi
+
+    # Install checkov if it's not present
+    if pip3 list | grep "^checkov\\s.*$" >/dev/null; then
+        echo "$ECHO_PRE_OK checkov is installed"
+    else
+        if pip3 install checkov; then
+            echo "$ECHO_PRE_INST checkov has been installed"
+        else
+            echo "$ECHO_PRE_ERR checkov installation failed"
+            exit 1
+        fi
+    fi
+
     # Install pre-commit hook if it's not present or doesn't point to the right location
     if [[ ! -L ".git/hooks/pre-commit" ]] || [ "$(readlink .git/hooks/pre-commit)" != "../../tools/pre-commit" ]; then
         if ln -s ../../tools/pre-commit .git/hooks/pre-commit; then

@@ -16,7 +16,8 @@ lint:
     - apt-get update
     - apt-get upgrade -y
     - apt-get install --no-install-recommends -y ca-certificates git golang nodejs npm python3-pip shellcheck
-    - pip3 install gitlint pre-commit yamllint
+    - pip3 install checkov gitlint pre-commit yamllint
+    - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
     - gitlint
     - tools/check-sanity
     - npm install -g markdownlint-cli

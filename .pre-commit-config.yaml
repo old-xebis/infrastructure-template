@@ -50,3 +50,15 @@ repos:
         entry: shellcheck
         language: system
         types: [shell]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.56.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-diff
+          - --args=-write=false
+      - id: terraform_validate
+      - id: terraform_tflint
+        args:
+          - --args=--enable-rule=terraform_documented_variables
+      - id: checkov

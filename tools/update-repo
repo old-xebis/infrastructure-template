@@ -10,6 +10,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && git rev-parse --s
 pushd "$REPO_DIR"
 
 # Update repository dependencies
+terraform init -upgrade
 pre-commit autoupdate
 pre-commit gc
 
