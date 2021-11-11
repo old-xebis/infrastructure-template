@@ -128,7 +128,30 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 ### Testing
 
-\#TODO: *Testing stack and how to run tests.*
+Testing checklist:
+
+- `tools/*`
+  - [ ] [`tools/check-sanity`](tools/check-sanity)
+  - [ ] [`tools/commit-msg`](tools/commit-msg)
+  - [ ] [`tools/setup-repo`](tools/setup-repo)
+  - [ ] [`tools/pre-commit`](tools/pre-commit)
+  - [ ] [`tools/pre-push`](tools/pre-push)
+  - [ ] [`tools/update-repo`](tools/update-repo)
+- Local working directory
+  - [ ] `git commit`
+  - [ ] `git push`
+  - [ ] `terraform init`
+  - [ ] `terraform plan`
+  - [ ] `terraform apply`
+  - [ ] `terraform destroy`
+- GitLab CI
+  - [ ] On a commit on a new _non-_`main` branch
+  - [ ] On a commit on existing _non-_`main` branch
+  - [ ] On a *pre-release* tag on a _non-_`main` branch commit
+  - [ ] After merge to `main` branch
+    - [ ] With a new feature or fix commit
+    - [ ] Without a new feature or fix commit
+  - [ ] Nightly (scheduled)
 
 ### Operations
 
