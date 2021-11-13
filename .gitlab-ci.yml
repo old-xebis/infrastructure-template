@@ -8,7 +8,7 @@ default:
 variables:
   TF_IN_AUTOMATION: "true"
   GL_TF_BE: https://gitlab.com/api/v4/projects/31099306/terraform/state
-  TF_HTTP_PASSWORD: ${CI_JOB_TOKEN}
+  TF_HTTP_PASSWORD: $CI_JOB_TOKEN
 
 stages:
   - validate
@@ -39,15 +39,12 @@ deploy-prod:
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  variables:
-    TF_TARGET_ENV_NAME: Production
-    TF_TARGET_ENV_SLUG: prod
   script:
-    - echo "Deploy **$TF_TARGET_ENV_NAME** environment \`$TF_TARGET_ENV_SLUG\` to <https://example.com>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$TF_TARGET_ENV_SLUG" -backend-config="lock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -input=false
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
     - terraform apply -auto-approve -input=false
   environment:
-    name: $TF_TARGET_ENV_NAME
+    name: Production
     url: https://example.com
   rules:
     - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
@@ -59,16 +56,13 @@ deploy-stag:
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  variables:
-    TF_TARGET_ENV_NAME: Staging
-    TF_TARGET_ENV_SLUG: stag
   script:
-    - echo "Deploy **$TF_TARGET_ENV_NAME** environment \`$TF_TARGET_ENV_SLUG\` to <https://$TF_TARGET_ENV_SLUG.example.com>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$TF_TARGET_ENV_SLUG" -backend-config="lock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -input=false
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
     - terraform apply -auto-approve -input=false
   environment:
-    name: $TF_TARGET_ENV_NAME
-    url: https://$TF_TARGET_ENV_SLUG.example.com
+    name: Staging
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
@@ -79,16 +73,13 @@ deploy-test:
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  variables:
-    TF_TARGET_ENV_NAME: Testing/$CI_COMMIT_REF_SLUG
-    TF_TARGET_ENV_SLUG: test-$CI_ENVIRONMENT_SLUG
   script:
-    - echo "Deploy **$TF_TARGET_ENV_NAME** environment \`$TF_TARGET_ENV_SLUG\` to <https://$TF_TARGET_ENV_SLUG.example.com>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$TF_TARGET_ENV_SLUG" -backend-config="lock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -input=false
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
     - terraform apply -auto-approve -input=false
   environment:
-    name: $TF_TARGET_ENV_NAME
-    url: https://$TF_TARGET_ENV_SLUG.example.com
+    name: Testing/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
   rules:
     - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
 
@@ -99,16 +90,13 @@ deploy-dev:
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  variables:
-    TF_TARGET_ENV_NAME: Development/$CI_COMMIT_REF_SLUG
-    TF_TARGET_ENV_SLUG: dev-$CI_ENVIRONMENT_SLUG
   script:
-    - echo "Deploy **$TF_TARGET_ENV_NAME** environment \`$TF_TARGET_ENV_SLUG\` to <https://$TF_TARGET_ENV_SLUG.example.com>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$TF_TARGET_ENV_SLUG" -backend-config="lock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$TF_TARGET_ENV_SLUG/lock" -input=false
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
     - terraform apply -auto-approve -input=false
   environment:
-    name: $TF_TARGET_ENV_NAME
-    url: https://$TF_TARGET_ENV_SLUG.example.com
+    name: Development/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
 

@@ -53,10 +53,10 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 Automatically updates environments:
 
-- On *release* tag runs `prod` environment deploy
-- On `main` branch commit runs `stag` environment deploy
-- On *pre-release* tag runs `test-<tag>` environment deploy
-- On _non-_`main` branch commit runs `dev-<branch>` environment deploy
+- On *release* tag runs **production** environment deploy
+- On `main` branch commit runs **staging** environment deploy
+- On *pre-release* tag runs **testing/_tag_** environment deploy
+- On _non-_`main` branch commit runs **development/_branch_** environment deploy
 
 Manually managed environments:
 
@@ -93,10 +93,10 @@ Install dependencies by `tools/setup-repo` script, update dependencies by `tools
 
 ### GitLab CI
 
-- Push a _non-_`main` branch to create or update `dev-<branch>` environment stub
-- Create *pre-release* tag to create `test-<tag>` environment stub
-- Merge to `main` branch to create or update `stag` environment stub
-- Have present a commit starting `feat` or `fix` from the previous release to create or update `prod` environment stub
+- Push a _non-_`main` branch to create or update **development/_branch_** environment stub
+- Create *pre-release* tag to create **testing/_tag_** environment stub
+- Merge to `main` branch to create or update **staging** environment stub
+- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment stub
 - Commit and push to run validations
 
 *Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
