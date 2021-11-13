@@ -20,7 +20,7 @@ lint:
   script:
     - apt-get update
     - apt-get upgrade -y
-    - apt-get install --no-install-recommends -y ca-certificates curl git golang nodejs npm python3-pip shellcheck
+    - apt-get install --no-install-recommends -y ca-certificates curl git golang nodejs npm python3-pip shellcheck unzip
     - pip3 install checkov gitlint pre-commit yamllint
     - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
     - gitlint
