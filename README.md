@@ -1,91 +1,205 @@
+<!-- omit in toc -->
 # Infrastructure Template
 
-Template for automated GitOps and IaC in a cloud. GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
+![GitHub top language](https://img.shields.io/github/languages/top/xebis/infrastructure-template)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-## Getting started
+![GitHub](https://img.shields.io/github/license/xebis/infrastructure-template)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/xebis/infrastructure-template)
+![GitHub issues](https://img.shields.io/github/issues/xebis/infrastructure-template)
+![GitHub last commit](https://img.shields.io/github/last-commit/xebis/infrastructure-template)
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Template for automated GitOps and IaC in a cloud.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
 
-## Add your files
+**The project is under active development.**
 
-- [ ] [Create](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+<!-- omit in toc -->
+## The Goal
 
+The goal is to have GitOps repository to automatically handle environments life cycle - its creation, update, configuration, and eventually destroy as well.
+
+> GitOps = IaC + MRs + CI/CD
+
+_[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
+
+<!-- omit in toc -->
+## Table of Contents
+
+- [Features](#features)
+- [Installation and Configuration](#installation-and-configuration)
+  - [Set up GitLab CI](#set-up-gitlab-ci)
+  - [Set up Local Usage](#set-up-local-usage)
+- [Usage](#usage)
+  - [GitLab CI](#gitlab-ci)
+  - [Local Usage](#local-usage)
+- [Contributing](#contributing)
+  - [Testing](#testing)
+- [To-Do list](#to-do-list)
+- [Roadmap](#roadmap)
+- [Credits and Acknowledgments](#credits-and-acknowledgments)
+- [Copyright and Licensing](#copyright-and-licensing)
+- [Changelog and News](#changelog-and-news)
+- [Notes and References](#notes-and-references)
+  - [Dependencies](#dependencies)
+  - [Recommendations](#recommendations)
+  - [Suggestions](#suggestions)
+  - [Further Reading](#further-reading)
+
+## Features
+
+Automatically updates environments:
+
+- On *release* tag runs **production** environment deploy
+- On `main` branch commit runs **staging** environment deploy
+- On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
+- On _non-_`main` branch commit runs **development/_branch_** environment deploy with 1 day or manual destruction
+
+Manually managed environments:
+
+- Create, update, or destroy any environment
+
+Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
+
+## Installation and Configuration
+
+Get Hetzner Cloud API token:
+
+- [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
+  - Hetzner Cloud Console -> Projects -> *Your Project* -> Security -> API Tokens -> Generate API Token `Read & Write`
+
+### Set up GitLab CI
+
+- GitLab -> Settings
+  - General > Visibility, project features, permissions > Operations: **on**
+  - CI/CD > Variables > Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
+
+### Set up Local Usage
+
+```shell
+export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
+export TF_HTTP_PASSWORD="$GL_TOKEN" # Set password for Terraform HTTP backend
+export HCLOUD_TOKEN="<token>" # Your Hetzner API token
+export TF_TARGET_ENV_NAME="<environment>" # Replace with the target environment name
+export TF_TARGET_ENV_SLUG="<env>" # Replace with the target environment slug
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/xebis/infrastructure-template.git
-git branch -M main
-git push -uf origin main
-```
 
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/integrations/)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Automatically merge when pipeline succeeds](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://docs.gitlab.com/ee/user/clusters/agent/)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://gitlab.com/-/experiment/new_project_readme_content:3eaa7f0ae0763d0d93067dc09ae3156f?https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### GitLab CI
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- Push a _non-_`main` branch to create or update **development/_branch_** environment stub
+  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
+- Create *pre-release* tag to create **testing/_tag_** environment stub
+  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
+- Merge to `main` branch to create or update **staging** environment stub
+- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment stub
+- Commit and push to run validations
+
+*Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
+
+### Local Usage
+
+Initialize local workspace if not yet initialized:
+
+```shell
+# Init local workspace
+terraform init -reconfigure \
+    -backend-config="address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG" \
+    -backend-config="lock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock" \
+    -backend-config="unlock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock"
+```
+
+Work with Terraform as you need: `terraform validate/fmt/plan/apply/show/refresh/output/destroy`
+
+Uninitialize local workspace if you wish:
+
+```shell
+rm -rf .terraform # Uninit local workspace, this step is required if you would like to work with another environment
+```
+
+Commit and push to run validations.
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting merge requests to us.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Testing
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+- Make sure all `tools/*` scripts, git hooks and GitLab pipelines work as expected, testing checklist:
 
-## License
-For open source projects, say how it is licensed.
+- `tools/*` scripts
+  - [ ] [`tools/check-sanity`](tools/check-sanity)
+  - [ ] [`tools/commit-msg`](tools/commit-msg)
+  - [ ] [`tools/setup-repo`](tools/setup-repo)
+  - [ ] [`tools/pre-commit`](tools/pre-commit)
+  - [ ] [`tools/pre-push`](tools/pre-push)
+  - [ ] [`tools/update-repo`](tools/update-repo)
+- Local working directory
+  - [ ] `git commit` runs [`tools/commit-msg`](tools/commit-msg) and [`tools/pre-commit`](tools/pre-commit)
+  - [ ] `git push` runs [`tools/pre-push`](tools/pre-push)
+  - [ ] `terraform init`
+  - [ ] `terraform plan`
+  - [ ] `terraform apply`
+  - [ ] `terraform destroy`
+- GitLab CI
+  - [ ] Commit on a new _non-_`main` branch runs `validate:lint`, `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Commit on an existing _non-_`main` branch within 24 hours runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Absence of commit on an existing _non-_`main` branch within 24 hours auto-stops **development/_branch_** environment
+  - [ ] *Pre-release* tag on a _non-_`main` branch commit runs `validate:lint`, `deploy:deploy-test`, and prepares `destroy:destroy-test`
+  - [ ] After a week auto-stops **testing/_tag_** environment
+  - [ ] Merge to `main` branch runs `validate:lint`, `deploy:deploy-stag`, and `release:release`
+    - [ ] With a new `feat` or `fix` commit releases a new version
+    - [ ] *Release* tag on `main` branch commit runs `validate:lint` and `deploy:deploy-prod`
+    - [ ] Without a new feature or fix commit does not release a new version
+  - [ ] Scheduled (nightly) pipeline runs `validate:lint`
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## To-Do list
 
+- [ ] Replace `shfmt` exact version `v3.3.1` at [.gitlab-ci.yml](.gitlab-ci.yml) with `latest`
+
+## Roadmap
+
+- [ ] Speed up CI/CD with a set of Docker images with pre-installed dependencies for each CI/CD stage
+
+## Credits and Acknowledgments
+
+- [Martin Bružina](https://bruzina.cz/) - Author
+
+## Copyright and Licensing
+
+- [MIT License](LICENSE)
+- Copyright © 2021 Martin Bružina
+
+## Changelog and News
+
+- [Changelog](CHANGELOG.md)
+
+## Notes and References
+
+### Dependencies
+
+- [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
+- [Terraform](https://www.terraform.io/)
+  - [Terraform: Hetzner Cloud Provider](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs)
+- [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
+
+### Recommendations
+
+- [GitHub - shuaibiyy/awesome-terraform](https://github.com/shuaibiyy/awesome-terraform)
+
+### Suggestions
+
+- [Visual Studio Code](https://code.visualstudio.com/) with [Extensions for Visual Studio Code](https://marketplace.visualstudio.com/VSCode):
+  - [HashiCorp Terraform](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
+
+### Further Reading
+
+- [GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)
+- [Semantic Versioning - Semantic Versioning 2.0.0](https://semver.org/)
+- [Conventional Commits - Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)

@@ -1,0 +1,165 @@
+---
+default:
+  image: ubuntu:latest
+  before_script:
+    - TZ="Europe/Prague"
+    - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+variables:
+  TF_IN_AUTOMATION: "true"
+  GL_TF_BE: https://gitlab.com/api/v4/projects/31099306/terraform/state
+  TF_HTTP_PASSWORD: $CI_JOB_TOKEN
+
+stages:
+  - validate
+  - deploy
+  - destroy
+  - release
+
+lint:
+  stage: validate
+  script:
+    - apt-get update && apt-get upgrade -y
+    - apt-get install --no-install-recommends -y ca-certificates curl git gnupg golang nodejs npm python3-pip shellcheck software-properties-common unzip
+    - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+    - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    - apt-get update && apt-get install --no-install-recommends terraform
+    - pip3 install checkov gitlint pre-commit yamllint
+    - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+    - gitlint
+    - tools/check-sanity
+    - npm install -g markdownlint-cli
+    - GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt@v3.3.1
+    - PATH="$PATH:/root/go/bin"
+    - GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run --all-files
+
+deploy-prod:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - /usr/bin/env
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  script:
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+    - terraform apply -auto-approve -input=false
+  environment:
+    name: Production
+    url: https://example.com
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+  resource_group: production
+
+deploy-stag:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - /usr/bin/env
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  script:
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+    - terraform apply -auto-approve -input=false
+  environment:
+    name: Staging
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  resource_group: staging
+
+deploy-test:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - /usr/bin/env
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  script:
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+    - terraform apply -auto-approve -input=false
+  environment:
+    name: Testing/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+    on_stop: destroy-test
+    auto_stop_in: 1 week
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+  resource_group: testing/$CI_COMMIT_REF_SLUG
+
+destroy-test:
+  stage: destroy
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - /usr/bin/env
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  script:
+    - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+    - terraform destroy -auto-approve -input=false
+  environment:
+    name: Testing/$CI_COMMIT_REF_SLUG
+    action: stop
+  needs:
+    - deploy-test
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      when: manual
+
+deploy-dev:
+  stage: deploy
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - /usr/bin/env
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  script:
+    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+    - terraform apply -auto-approve -input=false
+  environment:
+    name: Development/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+    on_stop: destroy-dev
+    auto_stop_in: 1 day
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+  resource_group: development/$CI_COMMIT_REF_SLUG
+
+destroy-dev:
+  stage: destroy
+  image:
+    name: hashicorp/terraform:light
+    entrypoint:
+      - /usr/bin/env
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  script:
+    - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+    - terraform destroy -auto-approve -input=false
+  environment:
+    name: Development/$CI_COMMIT_REF_SLUG
+    action: stop
+  needs:
+    - deploy-dev
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+      when: manual
+
+release:
+  stage: release
+  script:
+    - apt-get update
+    - apt-get upgrade -y
+    - apt-get install --no-install-recommends -y curl git npm
+    - curl -sL https://deb.nodesource.com/setup_14.x -o setup_14.sh
+    - bash ./setup_14.sh
+    - apt-get install --no-install-recommends -y nodejs
+    - npm install -g semantic-release @semantic-release/gitlab @semantic-release/github @semantic-release/git @semantic-release/changelog
+    - npx semantic-release
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  resource_group: release

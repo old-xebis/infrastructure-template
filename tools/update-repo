@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -e
+set -o pipefail
+set -u
+
+LANG=C
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && git rev-parse --show-toplevel)"
+
+pushd "$REPO_DIR"
+
+# Update repository dependencies
+terraform init -upgrade
+pre-commit autoupdate
+pre-commit gc
+
+popd
