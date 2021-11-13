@@ -131,9 +131,9 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 ### Testing
 
-Testing checklist:
+- Make sure all `tools/*` scripts, git hooks and GitLab pipelines work as expected, testing checklist:
 
-- `tools/*`
+- `tools/*` scripts
   - [ ] [`tools/check-sanity`](tools/check-sanity)
   - [ ] [`tools/commit-msg`](tools/commit-msg)
   - [ ] [`tools/setup-repo`](tools/setup-repo)
@@ -141,22 +141,23 @@ Testing checklist:
   - [ ] [`tools/pre-push`](tools/pre-push)
   - [ ] [`tools/update-repo`](tools/update-repo)
 - Local working directory
-  - [ ] `git commit`
-  - [ ] `git push`
+  - [ ] `git commit` runs [`tools/commit-msg`](tools/commit-msg) and [`tools/pre-commit`](tools/pre-commit)
+  - [ ] `git push` runs [`tools/pre-push`](tools/pre-push)
   - [ ] `terraform init`
   - [ ] `terraform plan`
   - [ ] `terraform apply`
   - [ ] `terraform destroy`
 - GitLab CI
-  - [ ] On a commit on a new _non-_`main` branch
-  - [ ] On a commit on existing _non-_`main` branch within 24 hours
-  - [ ] After **development/_branch_** environment auto-stop
-  - [ ] On a *pre-release* tag on a _non-_`main` branch commit
-  - [ ] After **testing/_tag_** environment auto-stop
-  - [ ] After merge to `main` branch
-    - [ ] With a new feature or fix commit
-    - [ ] Without a new feature or fix commit
-  - [ ] Nightly (scheduled)
+  - [ ] Commit on a new _non-_`main` branch runs `validate:lint`, `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Commit on an existing _non-_`main` branch within 24 hours runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Absence of commit on an existing _non-_`main` branch within 24 hours auto-stops **development/_branch_** environment
+  - [ ] *Pre-release* tag on a _non-_`main` branch commit runs `validate:lint`, `deploy:deploy-test`, and prepares `destroy:destroy-test`
+  - [ ] After a week auto-stops **testing/_tag_** environment
+  - [ ] Merge to `main` branch runs `validate:lint`, `deploy:deploy-stag`, and `release:release`
+    - [ ] With a new `feat` or `fix` commit releases a new version
+    - [ ] *Release* tag on `main` branch commit runs `validate:lint` and `deploy:deploy-prod`
+    - [ ] Without a new feature or fix commit does not release a new version
+  - [ ] Scheduled (nightly) pipeline runs `validate:lint`
 
 ## To-Do list
 
