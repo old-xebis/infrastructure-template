@@ -55,8 +55,8 @@ Automatically updates environments:
 
 - On *release* tag runs **production** environment deploy
 - On `main` branch commit runs **staging** environment deploy
-- On *pre-release* tag runs **testing/_tag_** environment deploy
-- On _non-_`main` branch commit runs **development/_branch_** environment deploy
+- On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
+- On _non-_`main` branch commit runs **development/_branch_** environment deploy with 1 day or manual destruction
 
 Manually managed environments:
 
@@ -94,7 +94,9 @@ Install dependencies by `tools/setup-repo` script, update dependencies by `tools
 ### GitLab CI
 
 - Push a _non-_`main` branch to create or update **development/_branch_** environment stub
+  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
 - Create *pre-release* tag to create **testing/_tag_** environment stub
+  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
 - Merge to `main` branch to create or update **staging** environment stub
 - Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment stub
 - Commit and push to run validations
@@ -147,8 +149,10 @@ Testing checklist:
   - [ ] `terraform destroy`
 - GitLab CI
   - [ ] On a commit on a new _non-_`main` branch
-  - [ ] On a commit on existing _non-_`main` branch
+  - [ ] On a commit on existing _non-_`main` branch within 24 hours
+  - [ ] After **development/_branch_** environment auto-stop
   - [ ] On a *pre-release* tag on a _non-_`main` branch commit
+  - [ ] After **testing/_tag_** environment auto-stop
   - [ ] After merge to `main` branch
     - [ ] With a new feature or fix commit
     - [ ] Without a new feature or fix commit
