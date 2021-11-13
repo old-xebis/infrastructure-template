@@ -38,7 +38,6 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
   - [Local Usage](#local-usage)
 - [Contributing](#contributing)
   - [Testing](#testing)
-  - [Operations](#operations)
 - [To-Do list](#to-do-list)
 - [Roadmap](#roadmap)
 - [Credits and Acknowledgments](#credits-and-acknowledgments)
@@ -54,10 +53,10 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 Automatically updates environments:
 
-- On *release* tag runs `prod` environment update stub
-- On `main` branch commit runs `stag` environment update stub
-- On *pre-release* tag runs `test-<tag>` environment update stub
-- On _non-_`main` branch commit runs `dev-<branch>` environment update stub
+- On *release* tag runs `prod` environment deploy
+- On `main` branch commit runs `stag` environment deploy
+- On *pre-release* tag runs `test-<tag>` environment deploy
+- On _non-_`main` branch commit runs `dev-<branch>` environment deploy
 
 Manually managed environments:
 
@@ -99,6 +98,8 @@ Install dependencies by `tools/setup-repo` script, update dependencies by `tools
 - Merge to `main` branch to create or update `stag` environment stub
 - Have present a commit starting `feat` or `fix` from the previous release to create or update `prod` environment stub
 - Commit and push to run validations
+
+*Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
 
 ### Local Usage
 
@@ -153,10 +154,6 @@ Testing checklist:
     - [ ] Without a new feature or fix commit
   - [ ] Nightly (scheduled)
 
-### Operations
-
-\#TODO: *Operations.*
-
 ## To-Do list
 
 - [ ] Replace `shfmt` exact version `v3.3.1` at [.gitlab-ci.yml](.gitlab-ci.yml) with `latest`
@@ -199,3 +196,5 @@ Testing checklist:
 ### Further Reading
 
 - [GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)
+- [Semantic Versioning - Semantic Versioning 2.0.0](https://semver.org/)
+- [Conventional Commits - Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
