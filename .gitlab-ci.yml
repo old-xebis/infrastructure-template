@@ -19,7 +19,7 @@ lint:
   stage: validate
   script:
     - apt-get update && apt-get upgrade -y
-    - apt-get install --no-install-recommends -y ca-certificates curl git golang nodejs npm python3-pip shellcheck software-properties-common unzip
+    - apt-get install --no-install-recommends -y ca-certificates curl git gnupg golang nodejs npm python3-pip shellcheck software-properties-common unzip
     - curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
     - apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     - apt-get update && apt-get install --no-install-recommends terraform
