@@ -1,3 +1,10 @@
+## [0.1.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.1.0...v0.1.1) (2021-11-14)
+
+
+### Bug Fixes
+
+* release tag shouldn't have skip ci flag ([81e2444](https://gitlab.com/xebis/infrastructure-template/commit/81e2444c1092413b030ac5aa3ea79011c65521e2))
+
 # [0.1.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.0.0...v0.1.0) (2021-11-13)
 
 
