@@ -1,3 +1,10 @@
+# [0.2.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.1.1...v0.2.0) (2021-11-14)
+
+
+### Features
+
+* mrs (prs) not blocked by undestroyed development environment ([83a4673](https://gitlab.com/xebis/infrastructure-template/commit/83a4673d99bd2021995b66f15ea3e29335a507ca))
+
 ## [0.1.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.1.0...v0.1.1) (2021-11-14)
 
 
