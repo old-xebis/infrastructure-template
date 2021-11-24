@@ -15,7 +15,7 @@ Template for automated GitOps and IaC in a cloud.
 
 GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
 
-**The project is under active development.**
+**The project is under active development.** The project is fork of [xebis/repository-template](https://github.com/xebis/repository-template).
 
 <!-- omit in toc -->
 ## The Goal
@@ -78,6 +78,8 @@ Get Hetzner Cloud API token:
   - CI/CD > Variables > Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
 
 ### Set up Local Usage
+
+You can edit and source `tools/load-secrets.sh` script, **please make sure you won't commit your secrets**.
 
 ```shell
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
