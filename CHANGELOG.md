@@ -1,3 +1,10 @@
+# [0.3.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.2.0...v0.3.0) (2021-11-24)
+
+
+### Features
+
+* add load-secrets script and other repository-template improvements ([b3b2071](https://gitlab.com/xebis/infrastructure-template/commit/b3b2071d39c33fcd5238e6545cafee260b56101c))
+
 # [0.2.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.1.1...v0.2.0) (2021-11-14)
 
 
