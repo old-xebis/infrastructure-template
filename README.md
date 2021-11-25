@@ -51,7 +51,9 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 ## Features
 
-Automatically updates environments:
+Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
+
+Automatically manages environments:
 
 - On *release* tag runs **production** environment deploy
 - On `main` branch commit runs **staging** environment deploy
@@ -61,8 +63,6 @@ Automatically updates environments:
 Manually managed environments:
 
 - Create, update, or destroy any environment
-
-Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
 
 ## Installation and Configuration
 
