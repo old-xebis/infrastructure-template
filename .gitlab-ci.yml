@@ -121,7 +121,7 @@ deploy-dev:
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   before_script:
     - apk update
-    - apk add curl
+    - apk add bash curl
   script:
     - tools/dev-env >> dev.env
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
