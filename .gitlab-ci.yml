@@ -123,8 +123,7 @@ deploy-dev:
     - apk update
     - apk add curl
   script:
-    - 'GL_TF_BE_ENV_HTTP_CODE=$(curl -s -H "Private-Token: $GL_TOKEN" -I "$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -o /dev/null -w "%{http_code}")'
-    - echo "GL_TF_BE_ENV_HTTP_CODE=$GL_TF_BE_ENV_HTTP_CODE" >> dev.env
+    - tools/dev-env >> dev.env
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
     - terraform apply -auto-approve -input=false
@@ -148,7 +147,7 @@ destroy-dev:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   script:
-    - echo "GL_TF_BE_ENV_HTTP_CODE=$GL_TF_BE_ENV_HTTP_CODE"
+    - echo "DEV_ENV=$DEV_ENV"
     - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
     - terraform destroy -auto-approve -input=false
