@@ -6,6 +6,7 @@ set -u
 LANG=C
 
 RESULT=false
+ENV_CI_PIPELINE_SOURCES=("api" "chat" "trigger" "web" "webide")
 
 GL_TF_BE_ENV_HTTP_CODE=$(curl -s -H "Private-Token: $GL_TOKEN" -I "$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -o /dev/null -w "%{http_code}")
 if [ "$GL_TF_BE_ENV_HTTP_CODE" == "200" ]; then
