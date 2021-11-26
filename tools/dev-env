@@ -27,8 +27,7 @@ if [[ $RESULT == "true" ]]; then
         RESULT=false
     fi
 
-    GIT_LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-    if [[ ${GIT_LAST_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]; then
+    if [[ ${CI_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]; then
         RESULT=false
     fi
 fi
