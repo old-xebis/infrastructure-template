@@ -1,3 +1,19 @@
+# [0.4.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.3.0...v0.4.0) (2021-11-26)
+
+
+### Bug Fixes
+
+* dev-env script fails on unitialized variable ([b9d1921](https://gitlab.com/xebis/infrastructure-template/commit/b9d1921d594d2335a81e729561eaa626d7184907))
+* dev-env script fails on wrong variable test ([4e1b076](https://gitlab.com/xebis/infrastructure-template/commit/4e1b076cf6cded8358576cc30c941c83b1059fd7))
+* tools/dev-env script miss allowed pipeline sources variable ([846e5e3](https://gitlab.com/xebis/infrastructure-template/commit/846e5e395c187859e12f16f086d961129f099d9a))
+
+
+### Features
+
+* add option to skip dev environment deploy by env var or commit msg ([e098e9a](https://gitlab.com/xebis/infrastructure-template/commit/e098e9ab1d4e12e69a1e4d140b5fd21b41a92526))
+* add script deciding whether to create dev environment or not ([74a8535](https://gitlab.com/xebis/infrastructure-template/commit/74a85354c2cef1746548348c53d42e9bf2d999fb))
+* create dev env only for non-push, update it when already exists ([1fd3329](https://gitlab.com/xebis/infrastructure-template/commit/1fd33296611bbf2c1de96afc611ef68cadc6b7a1))
+
 # [0.3.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.2.0...v0.3.0) (2021-11-24)
 
 
