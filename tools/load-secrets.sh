@@ -12,7 +12,8 @@ export HCLOUD_TOKEN=""
 export TF_TARGET_ENV_NAME="Local"
 export TF_TARGET_ENV_SLUG="loc"
 
-echo "${BASH_SOURCE[0]} ✓ Secrets loaded: GL_TOKEN"
+echo "${BASH_SOURCE[0]} ✓ Secrets loaded: GL_TOKEN, TF_HTTP_PASSWORD (= GL_TOKEN), HCLOUD_TOKEN"
+echo "${BASH_SOURCE[0]} ✓ Variables set: TF_TARGET_ENV_NAME=$TF_TARGET_ENV_NAME, TF_TARGET_ENV_SLUG=$TF_TARGET_ENV_SLUG"
 
 # Set skip-worktree bit on this file to make sure the file wouldn't be commited or pushed, for more information see
 # <https://git-scm.com/docs/git-update-index#_skip_worktree_bit>
