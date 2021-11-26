@@ -23,7 +23,7 @@ else
 fi
 
 if [[ $RESULT == "true" ]]; then
-    if [ "$ENV_SKIP" ] || [ "$SKIP_ENV" ]; then
+    if [ -n "${ENV_SKIP+x}" ] || [ -n "${SKIP_ENV+x}" ]; then
         RESULT=false
     fi
 
