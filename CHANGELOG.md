@@ -1,3 +1,10 @@
+## [0.4.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.4.0...v0.4.1) (2021-11-26)
+
+
+### Bug Fixes
+
+* load-secrets says it loaded only gitlab token ([bbd4a31](https://gitlab.com/xebis/infrastructure-template/commit/bbd4a3157fa1e7f41258ad28f02513501b24fb2e))
+
 # [0.4.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.3.0...v0.4.0) (2021-11-26)
 
 
