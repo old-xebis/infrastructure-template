@@ -1,4 +1,10 @@
 ---
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /^chore\(release\)/
+      when: never
+    - when: always
+
 default:
   image: ubuntu:latest
   before_script:
