@@ -21,4 +21,16 @@ else
         exit 255
     fi
 fi
+
+if [[ $DEV_ENV == "true" ]]; then
+    if [ "$ENV_SKIP" ] || [ "$SKIP_ENV" ]; then
+        RESULT=false
+    fi
+
+    GIT_LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+    if [[ ${GIT_LAST_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]; then
+        RESULT=false
+    fi
+fi
+
 echo "DEV_ENV=$RESULT"

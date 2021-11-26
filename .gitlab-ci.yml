@@ -121,7 +121,7 @@ deploy-dev:
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   before_script:
     - apk update
-    - apk add bash curl
+    - apk add bash curl git
   script:
     - tools/dev-env >> dev.env
     - . dev.env

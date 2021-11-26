@@ -58,7 +58,10 @@ Automatically manages environments:
 - On *release* tag runs **production** environment deploy
 - On `main` branch commit runs **staging** environment deploy
 - On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
-- On _non-_`main` branch commit runs **development/_branch_** environment deploy with 1 day or manual destruction
+- On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
+  - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP 200 for the environment state file)
+  - It runs when the pipeline is run by the pipelines API, GitLab ChatOps, created by using trigger token, created by using **Run pipeline** button in the GitLab UI, or created by using the GitLab WebIDE
+  - It doesn't run when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
 
 Manually managed environments:
 
