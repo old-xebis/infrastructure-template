@@ -119,10 +119,21 @@ deploy-dev:
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  before_script:
+    - apk update
+    - apk add bash curl git
   script:
-    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
-    - terraform apply -auto-approve -input=false
+    - tools/dev-env >> dev.env
+    - . dev.env
+    - |
+      if [[ $DEV_ENV == "true" ]]; then
+        echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+        terraform apply -auto-approve -input=false
+      fi
+  artifacts:
+    reports:
+      dotenv: dev.env
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
     url: https://$CI_ENVIRONMENT_SLUG.example.com
@@ -140,9 +151,13 @@ destroy-dev:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   script:
-    - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
-    - terraform destroy -auto-approve -input=false
+    - echo "DEV_ENV=$DEV_ENV"
+    - |
+      if [[ $DEV_ENV == "true" ]]; then
+        echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
+        terraform destroy -auto-approve -input=false
+      fi
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
     action: stop

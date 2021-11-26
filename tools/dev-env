@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -e
+set -o pipefail
+set -u
+
+LANG=C
+
+RESULT=false
+ENV_CI_PIPELINE_SOURCES=("api" "chat" "trigger" "web" "webide")
+
+GL_TF_BE_ENV_HTTP_CODE=$(curl -s -H "Private-Token: $GL_TOKEN" -I "$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -o /dev/null -w "%{http_code}")
+if [ "$GL_TF_BE_ENV_HTTP_CODE" == "200" ]; then
+    RESULT=true
+else
+    if [ "$GL_TF_BE_ENV_HTTP_CODE" == "404" ]; then
+        if [[ ${ENV_CI_PIPELINE_SOURCES[*]} =~ $CI_PIPELINE_SOURCE ]]; then
+            RESULT=true
+        fi
+    else
+        echo "Error: Terraform state at $GL_TF_BE/$CI_ENVIRONMENT_SLUG returns HTTP status code $GL_TF_BE_ENV_HTTP_CODE"
+        exit 255
+    fi
+fi
+
+if [[ $RESULT == "true" ]]; then
+    if [ -n "${ENV_SKIP+x}" ] || [ -n "${SKIP_ENV+x}" ]; then
+        RESULT=false
+    fi
+
+    GIT_LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+    if [[ ${GIT_LAST_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]; then
+        RESULT=false
+    fi
+fi
+
+echo "DEV_ENV=$RESULT"
