@@ -1,0 +1,4 @@
+---
+- name: It works!
+  ansible.builtin.debug:
+    msg: It works!

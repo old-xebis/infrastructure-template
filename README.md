@@ -69,16 +69,19 @@ Manually managed environments:
 
 ## Installation and Configuration
 
-Get Hetzner Cloud API token:
+Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
   - Hetzner Cloud Console -> Projects -> *Your Project* -> Security -> API Tokens -> Generate API Token `Read & Write`
+- Generate GitLab CI SSH keys `ssh-keygen -t rsa` (no passphrase, to file `keys/ci@gitlab.com` - **keep it secret!**), file `keys/ci@gitlab.com.pub` will be generated automatically, and commit it
 
 ### Set up GitLab CI
 
 - GitLab -> Settings
   - General > Visibility, project features, permissions > Operations: **on**
-  - CI/CD > Variables > Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
+  - CI/CD > Variables:
+    - Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
+    - Add variable: Key `GL_CI_SSH_KEY`, Value _contents of `keys/ci@gitlab.com` file_
 
 ### Set up Local Usage
 
@@ -92,7 +95,8 @@ export TF_TARGET_ENV_NAME="<environment>" # Replace with the target environment 
 export TF_TARGET_ENV_SLUG="<env>" # Replace with the target environment slug
 ```
 
-Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
+- Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
+- Replace `keys/mb@pc0.pub` with your public SSH key, and commit it
 
 ## Usage
 
@@ -120,7 +124,14 @@ terraform init -reconfigure \
     -backend-config="unlock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock"
 ```
 
-Work with Terraform as you need: `terraform validate/fmt/plan/apply/show/refresh/output/destroy`
+- Create or update environment by `terraform apply` or `terraform apply -auto-approve`
+- Get server IP address by `terraform output hcloud_server_test_ipv4_address`
+- SSH by `ssh root@$(terraform output -raw hcloud_server_test_ipv4_address)`
+- Ansible:
+  - Ping: `ansible -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), all -m ansible.builtin.ping`
+  - Get all facts: `ansible -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), all -m ansible.builtin.setup`
+  - Configure with playbook: `ansible-playbook -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), playbook.yml`
+- Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`
 
 Uninitialize local workspace if you wish:
 

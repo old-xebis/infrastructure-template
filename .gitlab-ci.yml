@@ -19,6 +19,7 @@ variables:
 stages:
   - validate
   - deploy
+  - config
   - destroy
   - release
 
@@ -136,6 +137,8 @@ deploy-dev:
         echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -input=false
         terraform apply -auto-approve -input=false
+        DEV_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
+        echo "DEV_IP=$DEV_IP" >> dev.env
       fi
   artifacts:
     reports:
@@ -145,6 +148,32 @@ deploy-dev:
     url: https://$CI_ENVIRONMENT_SLUG.example.com
     on_stop: destroy-dev
     auto_stop_in: 1 day
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+  resource_group: development/$CI_COMMIT_REF_SLUG
+
+config-dev:
+  stage: config
+  image: gableroux/ansible:latest
+  script:
+    - echo "DEV_ENV=$DEV_ENV"
+    - echo "DEV_IP=$DEV_IP"
+    - |
+      if [[ $DEV_ENV == "true" ]]; then
+        echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        eval $(ssh-agent -s)
+        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        ssh-keyscan "$DEV_IP" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
+        ansible -u root -i "$DEV_IP," all -m ansible.builtin.ping
+        ansible-playbook -u root -i "$DEV_IP," playbook.yml
+      fi
+  environment:
+    name: Development/$CI_COMMIT_REF_SLUG
+  needs:
+    - deploy-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
   resource_group: development/$CI_COMMIT_REF_SLUG
@@ -168,7 +197,7 @@ destroy-dev:
     name: Development/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
-    - deploy-dev
+    - config-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
       when: manual
