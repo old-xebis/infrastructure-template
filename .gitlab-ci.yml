@@ -168,8 +168,8 @@ config-dev:
         chmod 700 ~/.ssh
         ssh-keyscan "$DEV_IP" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        ansible -u root -i "$DEV_IP," all -m ansible.builtin.ping
-        ansible-playbook -u root -i "$DEV_IP," playbook.yml
+        ansible -u gitlab-ci -i "$DEV_IP," all -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i "$DEV_IP," playbook.yml
       fi
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
