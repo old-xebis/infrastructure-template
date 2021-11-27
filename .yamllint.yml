@@ -7,6 +7,11 @@ rules:
     max-spaces-inside: 1
   comments:
     min-spaces-from-content: 1
+    ignore: |
+      cloud-config.yml
+  document-start:
+    ignore: |
+      cloud-config.yml
   empty-lines:
     max: 1
   empty-values: enable

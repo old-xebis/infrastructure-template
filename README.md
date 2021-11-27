@@ -53,7 +53,9 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
 
-Automatically manages environments:
+Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible.
+
+Automatically managed environments:
 
 - On *release* tag runs **production** environment deploy
 - On `main` branch commit runs **staging** environment deploy
@@ -73,7 +75,7 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
   - Hetzner Cloud Console -> Projects -> *Your Project* -> Security -> API Tokens -> Generate API Token `Read & Write`
-- Generate GitLab CI SSH keys `ssh-keygen -t rsa` (no passphrase, to file `keys/ci@gitlab.com` - **keep it secret!**), file `keys/ci@gitlab.com.pub` will be generated automatically, and commit it
+- Generate GitLab CI SSH keys `ssh-keygen -t rsa` (no passphrase, _to your secret file_, **do not commit it!**), file with `.pub` extension will be generated automatically, put `*.pub` file contents at [`cloud-config.yml`](cloud-config.yml) under section `users:name=gitlab-ci` to the `ssh_authorized_keys` as the first element, and commit it
 
 ### Set up GitLab CI
 
@@ -81,7 +83,7 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
   - General > Visibility, project features, permissions > Operations: **on**
   - CI/CD > Variables:
     - Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
-    - Add variable: Key `GL_CI_SSH_KEY`, Value _contents of `keys/ci@gitlab.com` file_
+    - Add variable: Key `GL_CI_SSH_KEY`, Value _contents of your secret file_ created by `ssh-keygen -t rsa` above
 
 ### Set up Local Usage
 
@@ -91,12 +93,12 @@ You can edit and source `tools/load-secrets.sh` script, **please make sure you w
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
 export TF_HTTP_PASSWORD="$GL_TOKEN" # Set password for Terraform HTTP backend
 export HCLOUD_TOKEN="<token>" # Your Hetzner API token
-export TF_VAR_ENV_NAME="<environment>" # Replace with the target environment name
-export TF_VAR_ENV_SLUG="<env>" # Replace with the target environment slug
+export TF_VAR_ENV_NAME="<environment>" # Replace with the environment name
+export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 ```
 
 - Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
-- Replace `keys/mb@pc0.pub` with your public SSH key, and commit it
+- Replace with your public SSH key at [`cloud-config.yml`](cloud-config.yml) under section `users:name=mb` to the `ssh_authorized_keys` as the first element, and commit it
 
 ## Usage
 
@@ -203,11 +205,14 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
 - [Terraform](https://www.terraform.io/)
   - [Terraform: Hetzner Cloud Provider](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs)
+- [Ansible](https://www.ansible.com/)
+- [cloud-init](https://cloud-init.io/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
 
 ### Recommendations
 
-- [GitHub - shuaibiyy/awesome-terraform](https://github.com/shuaibiyy/awesome-terraform)
+- [GitHub - shuaibiyy/awesome-terraform: Curated list of resources on HashiCorp's Terraform](https://github.com/shuaibiyy/awesome-terraform)
+- [GitHub - KeyboardInterrupt/awesome-ansible: Awesome Ansible List](https://github.com/KeyboardInterrupt/awesome-ansible)
 
 ### Suggestions
 
