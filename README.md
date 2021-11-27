@@ -91,8 +91,8 @@ You can edit and source `tools/load-secrets.sh` script, **please make sure you w
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
 export TF_HTTP_PASSWORD="$GL_TOKEN" # Set password for Terraform HTTP backend
 export HCLOUD_TOKEN="<token>" # Your Hetzner API token
-export TF_TARGET_ENV_NAME="<environment>" # Replace with the target environment name
-export TF_TARGET_ENV_SLUG="<env>" # Replace with the target environment slug
+export TF_VAR_ENV_NAME="<environment>" # Replace with the target environment name
+export TF_VAR_ENV_SLUG="<env>" # Replace with the target environment slug
 ```
 
 - Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
@@ -119,9 +119,9 @@ Initialize local workspace if not yet initialized:
 ```shell
 # Init local workspace
 terraform init -reconfigure \
-    -backend-config="address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG" \
-    -backend-config="lock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock" \
-    -backend-config="unlock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock"
+    -backend-config="address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG" \
+    -backend-config="lock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG/lock" \
+    -backend-config="unlock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG/lock"
 ```
 
 - Create or update environment by `terraform apply` or `terraform apply -auto-approve`
