@@ -1,10 +1,10 @@
 provider "hcloud" {
-  # Configuration options
 }
 
-data "hcloud_locations" "demo" {
-}
-
-output "hcloud_locations_demo" {
-  value = data.hcloud_locations.demo.names
+resource "hcloud_server" "test" {
+  count       = local.count
+  name        = "${local.prefix}test${count.index}"
+  server_type = "cx11"
+  image       = "ubuntu-20.04"
+  user_data   = file("${path.module}/cloud-config.yml")
 }

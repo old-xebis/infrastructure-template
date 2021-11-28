@@ -1,0 +1,6 @@
+---
+- name: Set up test
+  hosts:
+    - all
+  roles:
+    - common

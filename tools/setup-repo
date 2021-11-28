@@ -140,7 +140,22 @@ else
         fi
     fi
 
-    # Install TFLint if it's not present
+    # Install terraform if it's not present
+    if apt-cache pkgnames terraform 2>/dev/null | grep "terraform" >/dev/null; then
+        echo "$ECHO_PRE_OK terraform is installed"
+    else
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+        sudo apt-get update
+        if $SUDO apt-get install -y terraform; then
+            echo "$ECHO_PRE_INST terraform has been installed"
+        else
+            echo "$ECHO_PRE_ERR terraform installation failed"
+            exit 1
+        fi
+    fi
+
+    # Install tflint if it's not present
     if tflint -v >/dev/null; then
         echo "$ECHO_PRE_OK tflint is installed"
     else
@@ -160,6 +175,30 @@ else
             echo "$ECHO_PRE_INST checkov has been installed"
         else
             echo "$ECHO_PRE_ERR checkov installation failed"
+            exit 1
+        fi
+    fi
+
+    # Install ansible if it's not present
+    if apt-cache pkgnames ansible 2>/dev/null | grep "ansible" >/dev/null; then
+        echo "$ECHO_PRE_OK ansible is installed"
+    else
+        if $SUDO apt-get install -y ansible; then
+            echo "$ECHO_PRE_INST ansible has been installed"
+        else
+            echo "$ECHO_PRE_ERR ansible installation failed"
+            exit 1
+        fi
+    fi
+
+    # Install ansible-lint if it's not present
+    if pip3 list | grep "^ansible-lint\\s.*$" >/dev/null; then
+        echo "$ECHO_PRE_OK ansible-lint is installed"
+    else
+        if pip3 install ansible-lint; then
+            echo "$ECHO_PRE_INST ansible-lint has been installed"
+        else
+            echo "$ECHO_PRE_ERR ansible-lint installation failed"
             exit 1
         fi
     fi

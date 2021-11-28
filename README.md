@@ -53,7 +53,9 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
 
-Automatically manages environments:
+Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible.
+
+Automatically managed environments:
 
 - On *release* tag runs **production** environment deploy
 - On `main` branch commit runs **staging** environment deploy
@@ -69,16 +71,19 @@ Manually managed environments:
 
 ## Installation and Configuration
 
-Get Hetzner Cloud API token:
+Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
   - Hetzner Cloud Console -> Projects -> *Your Project* -> Security -> API Tokens -> Generate API Token `Read & Write`
+- Generate GitLab CI SSH keys `ssh-keygen -t rsa` (no passphrase, _to your secret file_, **do not commit it!**), file with `.pub` extension will be generated automatically, put `*.pub` file contents at [`cloud-config.yml`](cloud-config.yml) under section `users:name=gitlab-ci` to the `ssh_authorized_keys` as the first element, and commit it
 
 ### Set up GitLab CI
 
 - GitLab -> Settings
   - General > Visibility, project features, permissions > Operations: **on**
-  - CI/CD > Variables > Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
+  - CI/CD > Variables:
+    - Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
+    - Add variable: Key `GL_CI_SSH_KEY`, Value _contents of your secret file_ created by `ssh-keygen -t rsa` above
 
 ### Set up Local Usage
 
@@ -88,23 +93,27 @@ You can edit and source `tools/load-secrets.sh` script, **please make sure you w
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
 export TF_HTTP_PASSWORD="$GL_TOKEN" # Set password for Terraform HTTP backend
 export HCLOUD_TOKEN="<token>" # Your Hetzner API token
-export TF_TARGET_ENV_NAME="<environment>" # Replace with the target environment name
-export TF_TARGET_ENV_SLUG="<env>" # Replace with the target environment slug
+export TF_VAR_ENV_NAME="<environment>" # Replace with the environment name
+export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 ```
 
-Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
+- Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
+- Replace with your public SSH key at [`cloud-config.yml`](cloud-config.yml) under section `users:name=mb` to the `ssh_authorized_keys` as the first element, and commit it
 
 ## Usage
 
 ### GitLab CI
 
-- Push a _non-_`main` branch to create or update **development/_branch_** environment stub
-  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
-- Create *pre-release* tag to create **testing/_tag_** environment stub
-  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
-- Merge to `main` branch to create or update **staging** environment stub
-- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment stub
 - Commit and push to run validations
+- Push a _non-_`main` branch
+  - To create **development/_branch_** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using **Run pipeline** button in the GitLab UI
+  - Once created, the environment will be updated (or recreated if it was destroyed) with each subsequent pipeline on the branch
+  - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
+  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
+- Create *pre-release* tag to create **testing/_tag_** environment
+  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
+- Merge to `main` branch to create or update **staging** environment
+- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment
 
 *Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
 
@@ -115,12 +124,19 @@ Initialize local workspace if not yet initialized:
 ```shell
 # Init local workspace
 terraform init -reconfigure \
-    -backend-config="address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG" \
-    -backend-config="lock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock" \
-    -backend-config="unlock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_TARGET_ENV_SLUG/lock"
+    -backend-config="address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG" \
+    -backend-config="lock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG/lock" \
+    -backend-config="unlock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG/lock"
 ```
 
-Work with Terraform as you need: `terraform validate/fmt/plan/apply/show/refresh/output/destroy`
+- Create or update environment by `terraform apply` or `terraform apply -auto-approve`
+- Get server IP address by `terraform output hcloud_server_test_ipv4_address`
+- SSH by `ssh root@$(terraform output -raw hcloud_server_test_ipv4_address)`
+- Ansible:
+  - Ping: `ansible -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), all -m ansible.builtin.ping`
+  - Get all facts: `ansible -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), all -m ansible.builtin.setup`
+  - Configure with playbook: `ansible-playbook -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), playbook.yml`
+- Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`
 
 Uninitialize local workspace if you wish:
 
@@ -192,11 +208,14 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
 - [Terraform](https://www.terraform.io/)
   - [Terraform: Hetzner Cloud Provider](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs)
+- [Ansible](https://www.ansible.com/)
+- [cloud-init](https://cloud-init.io/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
 
 ### Recommendations
 
-- [GitHub - shuaibiyy/awesome-terraform](https://github.com/shuaibiyy/awesome-terraform)
+- [GitHub - shuaibiyy/awesome-terraform: Curated list of resources on HashiCorp's Terraform](https://github.com/shuaibiyy/awesome-terraform)
+- [GitHub - KeyboardInterrupt/awesome-ansible: Awesome Ansible List](https://github.com/KeyboardInterrupt/awesome-ansible)
 
 ### Suggestions
 
