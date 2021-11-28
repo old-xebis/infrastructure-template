@@ -53,10 +53,40 @@ deploy-prod:
   script:
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
-    - terraform apply -auto-approve
+    - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
+    - PROD_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
+    - echo "PROD_IP=$PROD_IP" >> prod.env
+  artifacts:
+    reports:
+      dotenv: prod.env
   environment:
     name: Production
     url: https://example.com
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+  resource_group: production
+
+config-prod:
+  stage: config
+  image: gableroux/ansible:latest
+  script:
+    - echo "PROD_IP=$PROD_IP"
+    - |
+      if [ -n "$PROD_IP" ]; then
+        echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        eval $(ssh-agent -s)
+        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        ssh-keyscan "$PROD_IP" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
+        ansible -u gitlab-ci -i "$PROD_IP," all -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i "$PROD_IP," playbook.yml
+      fi
+  environment:
+    name: Production
+  needs:
+    - deploy-prod
   rules:
     - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
   resource_group: production
@@ -71,10 +101,40 @@ deploy-stag:
   script:
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
-    - terraform apply -auto-approve
+    - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
+    - STAG_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
+    - echo "STAG_IP=$STAG_IP" >> stag.env
+  artifacts:
+    reports:
+      dotenv: stag.env
   environment:
     name: Staging
     url: https://$CI_ENVIRONMENT_SLUG.example.com
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  resource_group: staging
+
+config-stag:
+  stage: config
+  image: gableroux/ansible:latest
+  script:
+    - echo "STAG_IP=$STAG_IP"
+    - |
+      if [ -n "$STAG_IP" ]; then
+        echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        eval $(ssh-agent -s)
+        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        ssh-keyscan "$STAG_IP" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
+        ansible -u gitlab-ci -i "$STAG_IP," all -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i "$STAG_IP," playbook.yml
+      fi
+  environment:
+    name: Staging
+  needs:
+    - deploy-stag
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   resource_group: staging
