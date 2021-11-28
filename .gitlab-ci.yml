@@ -91,7 +91,10 @@ deploy-test:
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
     - TEST_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
-    - echo "TEST_IP=$TEST_IP" >> dev.env
+    - echo "TEST_IP=$TEST_IP" >> test.env
+  artifacts:
+    reports:
+      dotenv: test.env
   environment:
     name: Testing/$CI_COMMIT_REF_SLUG
     url: https://$CI_ENVIRONMENT_SLUG.example.com
