@@ -104,13 +104,16 @@ export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 
 ### GitLab CI
 
-- Push a _non-_`main` branch to create or update **development/_branch_** environment stub
-  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
-- Create *pre-release* tag to create **testing/_tag_** environment stub
-  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
-- Merge to `main` branch to create or update **staging** environment stub
-- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment stub
 - Commit and push to run validations
+- Push a _non-_`main` branch
+  - To create **development/_branch_** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using **Run pipeline** button in the GitLab UI
+  - Once created, the environment will be updated (or recreated if it was destroyed) with each subsequent pipeline on the branch
+  - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
+  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
+- Create *pre-release* tag to create **testing/_tag_** environment
+  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
+- Merge to `main` branch to create or update **staging** environment
+- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment
 
 *Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
 
