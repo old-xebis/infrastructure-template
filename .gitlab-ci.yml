@@ -198,6 +198,7 @@ destroy-dev:
     name: Development/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
+    - deploy-dev
     - config-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
