@@ -40,6 +40,7 @@ lint:
     - GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt@v3.3.1
     - PATH="$PATH:/root/go/bin"
     - GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run --all-files
+  interruptible: true
   rules:
     - when: always
 
@@ -294,8 +295,7 @@ destroy-dev:
 release:
   stage: release
   script:
-    - apt-get update
-    - apt-get upgrade -y
+    - apt-get update && apt-get upgrade -y
     - apt-get install --no-install-recommends -y curl git npm
     - curl -sL https://deb.nodesource.com/setup_14.x -o setup_14.sh
     - bash ./setup_14.sh

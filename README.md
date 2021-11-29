@@ -87,7 +87,7 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 ### Set up Local Usage
 
-You can edit and source `tools/load-secrets.sh` script, **please make sure you won't commit your secrets**.
+You can edit and source `tools/secrets.sh` script, **please make sure you won't commit your secrets**.
 
 ```shell
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
@@ -95,6 +95,7 @@ export TF_HTTP_PASSWORD="$GL_TOKEN" # Set password for Terraform HTTP backend
 export HCLOUD_TOKEN="<token>" # Your Hetzner API token
 export TF_VAR_ENV_NAME="<environment>" # Replace with the environment name
 export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
+export TF_VAR_ENV_TIER="<tier>" # Replace with the environment slug, permitted values are "production", "staging", "testing", "development", or "other" (default)
 ```
 
 - Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
@@ -216,6 +217,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - [GitHub - shuaibiyy/awesome-terraform: Curated list of resources on HashiCorp's Terraform](https://github.com/shuaibiyy/awesome-terraform)
 - [GitHub - KeyboardInterrupt/awesome-ansible: Awesome Ansible List](https://github.com/KeyboardInterrupt/awesome-ansible)
+- [GitHub - hetznercloud/awesome-hcloud: A curated list of awesome libraries, tools, and integrations for Hetzner Cloud](https://github.com/hetznercloud/awesome-hcloud)
 
 ### Suggestions
 
