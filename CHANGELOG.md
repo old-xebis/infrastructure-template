@@ -1,3 +1,24 @@
+# [0.5.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.4.1...v0.5.0) (2021-11-29)
+
+
+### Bug Fixes
+
+* ci job config-dev uses root user instead of gitlab-ci ([a755fb0](https://gitlab.com/xebis/infrastructure-template/commit/a755fb0a305d6b5bacff3de51b1cf8c994323347))
+* destroy-dev fails as dev.env file is not passed to the job ([1b2b755](https://gitlab.com/xebis/infrastructure-template/commit/1b2b755ceeb22beb3486f2b37ec750c5e4bf5fb3))
+* missing terraform at setup-repo script ([17130fa](https://gitlab.com/xebis/infrastructure-template/commit/17130fa737af15451b1c2c976bb537a2a58c98b1))
+* staging and production fail on non-existent output variable ([3b8202f](https://gitlab.com/xebis/infrastructure-template/commit/3b8202fe3c8dae161b09015fe0bfd0aff4b2a1c4))
+
+
+### Features
+
+* add ansible ([8eed461](https://gitlab.com/xebis/infrastructure-template/commit/8eed46107977822f1d4295fc29c4b93530a2e65c))
+* add hetzner test vm and mb, ci ssh keys ([106257e](https://gitlab.com/xebis/infrastructure-template/commit/106257e7d4d1c8e7fa6e8d96810ace257f3f2900))
+* add production and staging environment configuration ([2696b5c](https://gitlab.com/xebis/infrastructure-template/commit/2696b5ca1bdd23577b1bcb581c5f49a5f8bdb059))
+* add test environment configuration ([b27a64a](https://gitlab.com/xebis/infrastructure-template/commit/b27a64a7dbf86db8d6f459eca7ec13dc05038f98))
+* add zero resource instances for prod and stag environments ([1a97973](https://gitlab.com/xebis/infrastructure-template/commit/1a97973ce8608b77b42c9fc60caab5b8e8662fc1))
+* each resource is prefixed with env slug to prevent uniqueness errs ([6379324](https://gitlab.com/xebis/infrastructure-template/commit/63793246ce878bec7aa970d4ec74f6ccc541c020))
+* replace hetzner ssh keys with cloud-init users and ssh keys ([bc1de8a](https://gitlab.com/xebis/infrastructure-template/commit/bc1de8a0b976cbfeb874f59eb6eaab650cb89a53))
+
 ## [0.4.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.4.0...v0.4.1) (2021-11-26)
 
 
