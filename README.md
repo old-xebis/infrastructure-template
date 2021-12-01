@@ -66,6 +66,7 @@ Automatically managed environments:
 
 - On *release* tag runs **production** environment deploy
 - On `main` branch commit runs **staging** environment deploy
+  - Releases and creates *release* tag when a commit starting `feat` or `fix` is present in the history from the previous release
 - On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
 - On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
@@ -127,9 +128,11 @@ export TF_VAR_ENV_TIER="<tier>" # Replace with the environment slug, permitted v
   - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization, or when CI pipeline is skipped altogether, for example using `git push -o ci.skip`
   - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
 - Create a *pre-release* tag to create **testing/_tag_** environment
+  - Pre-release tag must match regex `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`, see <https://regex101.com/r/G1OFXH/1>
   - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
 - Merge to the `main` branch to create or update the **staging** environment
 - Creates or updates **production** environment when a commit starting `feat` or `fix` is present in the history from the previous release
+  - *Release* tag must match regex `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`, see <https://regex101.com/r/9DFqb3/1>
 
 *Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
 
@@ -245,4 +248,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - [GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)
 - [Semantic Versioning - Semantic Versioning 2.0.0](https://semver.org/)
+  - [RegEx101: Valid Semantic Versions](https://regex101.com/r/vkijKf/1/)
+  - [RegEx101: Valid Release Semantic Versions](https://regex101.com/r/9DFqb3/1)
+  - [RegEx101: Valid Pre-release Semantic Versions](https://regex101.com/r/G1OFXH/1)
 - [Conventional Commits - Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
