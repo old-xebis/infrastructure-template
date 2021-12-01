@@ -30,6 +30,7 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 ## Table of Contents
 
 - [Features](#features)
+  - [Images](#images)
 - [Installation and Configuration](#installation-and-configuration)
   - [Set up GitLab CI](#set-up-gitlab-ci)
   - [Set up Local Usage](#set-up-local-usage)
@@ -51,9 +52,15 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 ## Features
 
+Optimized for [GitHub flow](https://guides.github.com/introduction/flow/), easily adjustable to [GitLab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html) or any other workflow.
+
+![Example of the full workflow](images/workflow-full.png)
+
 Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
 
-Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible.
+Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible over SSH.
+
+![Deploy in more detail](images/deploy.png)
 
 Automatically managed environments:
 
@@ -69,6 +76,12 @@ Automatically managed environments:
 Manually managed environments:
 
 - Create, update, or destroy any environment
+
+### Images
+
+- [Git workflow examples & template](images/workflow.drawio) - inspired by [diagrams.net: Blog - How to create a gitflow diagram](https://www.diagrams.net/blog/gitflow-diagram)
+- [Example of the full workflow](images/workflow-full.png)
+- [Deploy in more detail](images/deploy.png)
 
 ## Installation and Configuration
 

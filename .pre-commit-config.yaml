@@ -13,6 +13,7 @@ repos:
       - id: destroyed-symlinks
       - id: detect-private-key
       - id: end-of-file-fixer
+        exclude: .*\.drawio$
       - id: fix-byte-order-marker
       - id: forbid-new-submodules
       - id: mixed-line-ending
@@ -24,6 +25,7 @@ repos:
     hooks:
       - id: check-mailmap
       - id: forbid-binary
+        exclude: .*\.png$
       - id: script-must-have-extension
       - id: script-must-not-have-extension
   - repo: https://github.com/igorshubovych/markdownlint-cli
