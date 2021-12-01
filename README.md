@@ -61,8 +61,9 @@ Automatically managed environments:
 - On `main` branch commit runs **staging** environment deploy
 - On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
 - On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
-  - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP 200 for the environment state file)
-  - It runs when the pipeline is run by the pipelines API, GitLab ChatOps, created by using trigger token, created by using **Run pipeline** button in the GitLab UI, or created by using the GitLab WebIDE
+  - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
+  - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using **Run pipeline** *button in the GitLab UI*, or created by using the *GitLab WebIDE*
+  - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's present the environment variable `ENV_CREATE` or `CREATE_ENV`
   - It doesn't run when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
 
 Manually managed environments:
@@ -108,6 +109,7 @@ export TF_VAR_ENV_TIER="<tier>" # Replace with the environment slug, permitted v
 - Commit and push to run validations
 - Push a _non-_`main` branch
   - To create **development/_branch_** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using **Run pipeline** button in the GitLab UI
+  - Alternatively you can create **development/_branch_** environment by pushing or scheduling with `ENV_CREATE` or `CREATE_ENV` environment variable present
   - Once created, the environment will be updated (or recreated if it was destroyed) with each subsequent pipeline on the branch
   - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
   - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
@@ -170,7 +172,9 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
   - [ ] `terraform apply`
   - [ ] `terraform destroy`
 - GitLab CI
-  - [ ] Commit on a new _non-_`main` branch runs `validate:lint`, `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Commit on a new _non-_`main` branch runs `validate:lint`
+    - [ ] Without any environment variables runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+    - [ ] With environment variable `ENV_CREATE` or `CREATE_ENV` runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
   - [ ] Commit on an existing _non-_`main` branch within 24 hours runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
   - [ ] Absence of commit on an existing _non-_`main` branch within 24 hours auto-stops **development/_branch_** environment
   - [ ] *Pre-release* tag on a _non-_`main` branch commit runs `validate:lint`, `deploy:deploy-test`, and prepares `destroy:destroy-test`

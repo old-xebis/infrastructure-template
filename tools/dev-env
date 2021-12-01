@@ -6,15 +6,20 @@ set -u
 LANG=C
 
 RESULT=false
-ENV_CI_PIPELINE_SOURCES=("api" "chat" "trigger" "web" "webide")
+ENV_CI_PIPELINE_SOURCES_AUTO=("api" "chat" "trigger" "web" "webide")
+ENV_CI_PIPELINE_SOURCES_VAR=("push" "schedule")
 
 GL_TF_BE_ENV_HTTP_CODE=$(curl -s -H "Private-Token: $GL_TOKEN" -I "$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -o /dev/null -w "%{http_code}")
 if [ "$GL_TF_BE_ENV_HTTP_CODE" == "200" ]; then
     RESULT=true
 else
     if [ "$GL_TF_BE_ENV_HTTP_CODE" == "404" ]; then
-        if [[ ${ENV_CI_PIPELINE_SOURCES[*]} =~ $CI_PIPELINE_SOURCE ]]; then
+        if [[ ${ENV_CI_PIPELINE_SOURCES_AUTO[*]} =~ $CI_PIPELINE_SOURCE ]]; then
             RESULT=true
+        else
+            if [[ ${ENV_CI_PIPELINE_SOURCES_VAR[*]} =~ $CI_PIPELINE_SOURCE ]] && [ -n "${ENV_CREATE+x}" ] || [ -n "${CREATE_ENV+x}" ]; then
+                RESULT=true
+            fi
         fi
     else
         echo "Error: Terraform state at $GL_TF_BE/$CI_ENVIRONMENT_SLUG returns HTTP status code $GL_TF_BE_ENV_HTTP_CODE"
