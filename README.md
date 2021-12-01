@@ -15,12 +15,12 @@ Template for automated GitOps and IaC in a cloud.
 
 GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
 
-**The project is under active development.** The project is fork of [xebis/repository-template](https://github.com/xebis/repository-template).
+**The project is under active development.** The project is a fork of [xebis/repository-template](https://github.com/xebis/repository-template).
 
 <!-- omit in toc -->
 ## The Goal
 
-The goal is to have GitOps repository to automatically handle environments life cycle - its creation, update, configuration, and eventually destroy as well.
+The goal is to have a GitOps repository to automatically handle environments life cycle - its creation, update, configuration, and eventually destroy as well.
 
 > GitOps = IaC + MRs + CI/CD
 
@@ -62,9 +62,9 @@ Automatically managed environments:
 - On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
 - On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
-  - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using **Run pipeline** *button in the GitLab UI*, or created by using the *GitLab WebIDE*
+  - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using the **Run pipeline** *button in the GitLab UI* or created by using the *GitLab WebIDE*
   - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's present the environment variable `ENV_CREATE` or `CREATE_ENV`
-  - It doesn't run when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
+  - It doesn't run when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or the commit message contains `[env skip]` or `[skip env]`, using any capitalization
 
 Manually managed environments:
 
@@ -108,15 +108,15 @@ export TF_VAR_ENV_TIER="<tier>" # Replace with the environment slug, permitted v
 
 - Commit and push to run validations
 - Push a _non-_`main` branch
-  - To create **development/_branch_** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using **Run pipeline** button in the GitLab UI
-  - Alternatively you can create **development/_branch_** environment by pushing or scheduling with `ENV_CREATE` or `CREATE_ENV` environment variable present
+  - To create a **development/_branch_** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using the **Run pipeline** button in the GitLab UI
+  - Alternatively, you can create a **development/_branch_** environment directly by pushing or scheduling with `ENV_CREATE` or `CREATE_ENV` environment variable present, for example by running `git push -o ci.variable="CREATE_ENV=true"`
   - Once created, the environment will be updated (or recreated if it was destroyed) with each subsequent pipeline on the branch
-  - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization
+  - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization, or when CI pipeline is skipped altogether, for example using `git push -o ci.skip`
   - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
-- Create *pre-release* tag to create **testing/_tag_** environment
+- Create a *pre-release* tag to create **testing/_tag_** environment
   - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
-- Merge to `main` branch to create or update **staging** environment
-- Have present a commit starting `feat` or `fix` from the previous release to create or update **production** environment
+- Merge to the `main` branch to create or update the **staging** environment
+- Creates or updates **production** environment when a commit starting `feat` or `fix` is present in the history from the previous release
 
 *Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
 
@@ -173,15 +173,15 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
   - [ ] `terraform destroy`
 - GitLab CI
   - [ ] Commit on a new _non-_`main` branch runs `validate:lint`
-    - [ ] Without any environment variables runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
-    - [ ] With environment variable `ENV_CREATE` or `CREATE_ENV` runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+    - [ ] Without any environment variables, runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+    - [ ] With environment variable `ENV_CREATE` or `CREATE_ENV`, runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
   - [ ] Commit on an existing _non-_`main` branch within 24 hours runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
   - [ ] Absence of commit on an existing _non-_`main` branch within 24 hours auto-stops **development/_branch_** environment
   - [ ] *Pre-release* tag on a _non-_`main` branch commit runs `validate:lint`, `deploy:deploy-test`, and prepares `destroy:destroy-test`
   - [ ] After a week auto-stops **testing/_tag_** environment
-  - [ ] Merge to `main` branch runs `validate:lint`, `deploy:deploy-stag`, and `release:release`
-    - [ ] With a new `feat` or `fix` commit releases a new version
-    - [ ] *Release* tag on `main` branch commit runs `validate:lint` and `deploy:deploy-prod`
+  - [ ] Merge to the `main` branch runs `validate:lint`, `deploy:deploy-stag`, and `release:release`
+    - [ ] With a new `feat` or `fix`, commit releases a new version
+    - [ ] *Release* tag on the `main` branch commit runs `validate:lint` and `deploy:deploy-prod`
     - [ ] Without a new feature or fix commit does not release a new version
   - [ ] Scheduled (nightly) pipeline runs `validate:lint`
 
