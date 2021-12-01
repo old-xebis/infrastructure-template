@@ -1,3 +1,10 @@
+# [0.6.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.5.0...v0.6.0) (2021-12-01)
+
+
+### Features
+
+* create dev env from push or scheduled pipelines ([076da71](https://gitlab.com/xebis/infrastructure-template/commit/076da7154eb2b93ed2720aeb3bb37c92a06e3805))
+
 # [0.5.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.4.1...v0.5.0) (2021-11-29)
 
 
