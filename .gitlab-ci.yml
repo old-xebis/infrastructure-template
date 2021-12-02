@@ -112,7 +112,7 @@ deploy-stag:
     name: Staging
     url: https://$CI_ENVIRONMENT_SLUG.example.com
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: staging
 
 config-stag:
@@ -137,7 +137,7 @@ config-stag:
   needs:
     - deploy-stag
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
   resource_group: staging
 
 deploy-test:
