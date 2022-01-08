@@ -1,40 +1,57 @@
 #!/usr/bin/env bash
-set -e
-set -o pipefail
-set -u
-
+set -euo pipefail
+IFS=$'\n\t'
 LANG=C
 
-RESULT=false
-ENV_CI_PIPELINE_SOURCES_AUTO=("api" "chat" "trigger" "web" "webide")
-ENV_CI_PIPELINE_SOURCES_VAR=("push" "schedule")
+# shellcheck source=./shellib/shellib.sh
+. "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/shellib/shellib.sh"
 
-GL_TF_BE_ENV_HTTP_CODE=$(curl -s -H "Private-Token: $GL_TOKEN" -I "$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -o /dev/null -w "%{http_code}")
-if [ "$GL_TF_BE_ENV_HTTP_CODE" == "200" ]; then
-    RESULT=true
-else
-    if [ "$GL_TF_BE_ENV_HTTP_CODE" == "404" ]; then
-        if [[ ${ENV_CI_PIPELINE_SOURCES_AUTO[*]} =~ $CI_PIPELINE_SOURCE ]]; then
-            RESULT=true
-        else
-            if [[ ${ENV_CI_PIPELINE_SOURCES_VAR[*]} =~ $CI_PIPELINE_SOURCE ]] && [ -n "${ENV_CREATE+x}" ] || [ -n "${CREATE_ENV+x}" ]; then
-                RESULT=true
-            fi
+# Check if dev env should be created by CI pipeline source
+function is_dev_env_pipeline_source() {
+    local ci_pipeline_sources=('api' 'chat' 'trigger' 'web' 'webide')
+    [[ ${ci_pipeline_sources[*]} =~ $CI_PIPELINE_SOURCE ]]
+}
+
+# Check if dev env should be created by CI pipeline source and ENV_SKIP or CREATE_ENV variable
+function is_dev_env_create_var() {
+    local ci_pipeline_sources=('push' 'schedule')
+    [[ ${ci_pipeline_sources[*]} =~ $CI_PIPELINE_SOURCE ]] &&
+        { [ -n "${ENV_CREATE+x}" ] || [ -n "${CREATE_ENV+x}" ]; }
+}
+
+# Check if dev env should be skipped by ENV_SKIP or SKIP_ENV variable
+function is_dev_env_skip() {
+    [ -n "${ENV_SKIP+x}" ] || [ -n "${SKIP_ENV+x}" ] ||
+        [[ ${CI_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]
+}
+
+# Check if dev env should be created or skipped
+function dev_env() {
+    local result=1
+    local gl_tf_be_status_code
+
+    gl_tf_be_status_code=$(curl -s -H "Private-Token: $GL_TOKEN" -I "$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -o /dev/null -w '%{http_code}')
+    case "$gl_tf_be_status_code" in
+    200) result=0 ;;
+    404)
+        if is_dev_env_pipeline_source || is_dev_env_create_var; then
+            result=0
         fi
-    else
-        echo "Error: Terraform state at $GL_TF_BE/$CI_ENVIRONMENT_SLUG returns HTTP status code $GL_TF_BE_ENV_HTTP_CODE"
-        exit 255
+        ;;
+    *)
+        err "Terraform state at '$GL_TF_BE/$CI_ENVIRONMENT_SLUG' returns HTTP status code '$gl_tf_be_status_code'"
+        return "$status_err"
+        ;;
+    esac
+
+    if [ $result == 0 ] && is_dev_env_skip; then
+        return 1
     fi
+
+    return $result
+}
+
+# Skip execution under test
+if [ "${BASH_SOURCE[0]}" == "${0}" ]; then
+    dev_env
 fi
-
-if [[ $RESULT == "true" ]]; then
-    if [ -n "${ENV_SKIP+x}" ] || [ -n "${SKIP_ENV+x}" ]; then
-        RESULT=false
-    fi
-
-    if [[ ${CI_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]; then
-        RESULT=false
-    fi
-fi
-
-echo "DEV_ENV=$RESULT"
