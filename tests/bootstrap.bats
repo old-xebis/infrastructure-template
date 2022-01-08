@@ -18,6 +18,11 @@ setup() {
     }
     export -f apt_add
 
+    function lsb_release() {
+        return 0
+    }
+    export -f lsb_release
+
     function pkgs() {
         echo 'OK'
     }
