@@ -244,8 +244,14 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
 - [Terraform](https://www.terraform.io/)
   - [Terraform: Hetzner Cloud Provider](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs)
+  - [GitHub - antonbabenko/pre-commit-terraform: pre-commit git hooks to take care of Terraform configurations](https://github.com/antonbabenko/pre-commit-terraform)
+  - [GitHub - terraform-linters/tflint: A Pluggable Terraform Linter](https://github.com/terraform-linters/tflint)
+  - [checkov](https://www.checkov.io/)
 - [Ansible](https://www.ansible.com/)
+  - [GitHub - ansible-community/ansible-lint: Best practices checker for Ansible](https://github.com/ansible-community/ansible-lint)
 - [cloud-init](https://cloud-init.io/)
+- [Docker Hub - hashicorp/terraform](https://hub.docker.com/r/hashicorp/terraform/)
+- [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
 
 ### Recommendations
@@ -258,6 +264,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - [Visual Studio Code](https://code.visualstudio.com/) with [Extensions for Visual Studio Code](https://marketplace.visualstudio.com/VSCode):
   - [HashiCorp Terraform](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
+  - [Ansible](https://marketplace.visualstudio.com/items?itemName=tomaciazek.ansible)
 
 ### Further Reading
 
