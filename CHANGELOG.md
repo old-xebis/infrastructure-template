@@ -1,3 +1,10 @@
+# [0.7.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.6.0...v0.7.0) (2022-01-08)
+
+
+### Features
+
+* rewrite dev-env, return from output to status, add unit tests ([1068598](https://gitlab.com/xebis/infrastructure-template/commit/106859883c3a559ac60db6762530355bc2cdf270))
+
 # [0.6.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.5.0...v0.6.0) (2021-12-01)
 
 
