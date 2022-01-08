@@ -10,6 +10,7 @@
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/xebis/infrastructure-template)
 ![GitHub issues](https://img.shields.io/github/issues/xebis/infrastructure-template)
 ![GitHub last commit](https://img.shields.io/github/last-commit/xebis/infrastructure-template)
+[![pipeline status](https://gitlab.com/xebis/infrastructure-template/badges/main/pipeline.svg?ignore_skipped=true)](https://gitlab.com/xebis/infrastructure-template/-/commits/main)
 
 Template for automated GitOps and IaC in a cloud.
 
@@ -56,7 +57,7 @@ Optimized for [GitHub flow](https://guides.github.com/introduction/flow/), easil
 
 ![Example of the full workflow](images/workflow-full.png)
 
-Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
+Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), runs tests, deployments, releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
 
 Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible over SSH.
 
@@ -102,7 +103,7 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 ### Set up Local Usage
 
-You can edit and source `tools/secrets.sh` script, **please make sure you won't commit your secrets**.
+You can edit and source `scripts/secrets.sh` script, **please make sure you won't commit your secrets**.
 
 ```shell
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
@@ -113,7 +114,7 @@ export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 export TF_VAR_ENV_TIER="<tier>" # Replace with the environment slug, permitted values are "production", "staging", "testing", "development", or "other" (default)
 ```
 
-- Install dependencies by `tools/setup-repo` script, update dependencies by `tools/setup-repo` script.
+- Setup repository by `scripts/setup`, install dependencies by `sudo scripts/bootstrap` script, update repository by `scripts/update` script.
 - Replace with your public SSH key at [`cloud-config.yml`](cloud-config.yml) under section `users:name=mb` to the `ssh_authorized_keys` as the first element, and commit it
 
 ## Usage
@@ -171,43 +172,57 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 ### Testing
 
-- Make sure all `tools/*` scripts, git hooks and GitLab pipelines work as expected, testing checklist:
+- Git hooks check a lot of things for you, including running automated tests `scripts/test full`
+- Make sure all `scripts/*`, git hooks, and GitLab pipelines work as expected, testing checklist:
 
-- `tools/*` scripts
-  - [ ] [`tools/check-sanity`](tools/check-sanity)
-  - [ ] [`tools/commit-msg`](tools/commit-msg)
-  - [ ] [`tools/setup-repo`](tools/setup-repo)
-  - [ ] [`tools/pre-commit`](tools/pre-commit)
-  - [ ] [`tools/pre-push`](tools/pre-push)
-  - [ ] [`tools/update-repo`](tools/update-repo)
+- `scripts/*` scripts - covered by unit tests `tests/*`
+  - [ ] [`scripts/bootstrap`](scripts/bootstrap)
+  - [ ] [`scripts/dev-env`](scripts/dev-env)
+  - [ ] [`scripts/pre-commit`](scripts/pre-commit)
+  - [ ] [`scripts/pre-push`](scripts/pre-push)
+  - [ ] [`scripts/secrets.sh`](scripts/secrets.sh)
+  - [ ] [`scripts/setup`](scripts/setup)
+  - [ ] [`scripts/test`](scripts/test)
+  - [ ] [`scripts/update`](scripts/update)
 - Local working directory
-  - [ ] `git commit` runs [`tools/commit-msg`](tools/commit-msg) and [`tools/pre-commit`](tools/pre-commit)
-  - [ ] `git push` runs [`tools/pre-push`](tools/pre-push)
-  - [ ] `terraform init`
-  - [ ] `terraform plan`
-  - [ ] `terraform apply`
-  - [ ] `terraform destroy`
+  - [ ] `git commit` runs `pre-commit` hook-type `commit-msg` and [`scripts/pre-commit`](scripts/pre-commit)
+  - [ ] `git merge`
+    - [ ] Fast-forward shouldn't run any hooks or scripts
+    - [ ] Automatically resolved `merge commit` runs `pre-commit` hook-type `commit-msg` and [`scripts/pre-commit`](scripts/pre-commit)
+    - [ ] Manually resolved `merge commit` runs `pre-commit` hook-type `commit-msg` and [`scripts/pre-commit`](scripts/pre-commit)
+  - [ ] `git push` runs [`scripts/pre-push`](scripts/pre-push)
+  - Terraform and Ansible
+    - [ ] `terraform init`
+    - [ ] `terraform plan`
+    - [ ] `terraform apply`
+    - [ ] `ansible ... ping`
+    - [ ] `ansible-playbook`
+    - [ ] `terraform destroy`
 - GitLab CI
-  - [ ] Commit on a new _non-_`main` branch runs `validate:lint`
+  - [ ] Commit on a new _non-_`main` branch runs `validate:lint` and `validate:test-full`
     - [ ] Without any environment variables, runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
     - [ ] With environment variable `ENV_CREATE` or `CREATE_ENV`, runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
   - [ ] Commit on an existing _non-_`main` branch within 24 hours runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
   - [ ] Absence of commit on an existing _non-_`main` branch within 24 hours auto-stops **development/_branch_** environment
-  - [ ] *Pre-release* tag on a _non-_`main` branch commit runs `validate:lint`, `deploy:deploy-test`, and prepares `destroy:destroy-test`
-  - [ ] After a week auto-stops **testing/_tag_** environment
-  - [ ] Merge to the `main` branch runs `validate:lint`, `deploy:deploy-stag`, and `release:release`
+  - [ ] *Pre-release* tag on a _non-_`main` branch commit runs `validate:lint`, `validate:test-full`, `deploy:deploy-test`, and prepares `destroy:destroy-test`
+    - [ ] After a week auto-stops **testing/_tag_** environment
+  - [ ] Merge to the `main` branch runs `validate:lint`, `validate:test-full`, `deploy:deploy-stag`, and `release:release`
     - [ ] With a new `feat` or `fix`, commit releases a new version
-    - [ ] *Release* tag on the `main` branch commit runs `validate:lint` and `deploy:deploy-prod`
+    - [ ] *Release* tag on the `main` branch commit runs `validate:lint`, `validate:test-full` and `deploy:deploy-prod`
     - [ ] Without a new feature or fix commit does not release a new version
-  - [ ] Scheduled (nightly) pipeline runs `validate:lint`
+  - [ ] Scheduled (nightly) pipeline runs `validate:lint` and `validate:test-nightly`
 
 ## To-Do list
 
-- [ ] Replace `shfmt` exact version `v3.3.1` at [.gitlab-ci.yml](.gitlab-ci.yml) with `latest`
+- [ ] Fix workaround for pre-commit `jumanjihouse/pre-commit-hooks` hook `script-must-have-extension` - `*.bats` shouldn't be excluded
+- [ ] Fix workaround for pre-commit `local` hook `shellcheck` - shellcheck has duplicated parameters from `.shellcheckrc`, because these are not taken into account
 
 ## Roadmap
 
-- [ ] Speed up CI/CD with a set of Docker images with pre-installed dependencies for each CI/CD stage
+- [ ] Find a satisfactory way how to manage (list, install, update) dependencies across various distributions and package managers
+- [ ] Add [pre-commit meta hooks](https://pre-commit.com/#meta-hooks)
+- [ ] Add [jumanjihouse/pre-commit-hooks hook protect-first-parent](https://github.com/jumanjihouse/pre-commit-hooks#protect-first-parent)
+- [ ] Speed up CI/CD by preparing a set of Docker images with pre-installed dependencies for each CI/CD stage, or by cache for `apk`, `pip`, and `npm`
 
 ## Credits and Acknowledgments
 

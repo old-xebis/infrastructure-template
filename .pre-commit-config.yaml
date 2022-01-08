@@ -1,7 +1,12 @@
 ---
+default_stages: [commit, manual, merge-commit, push]
 repos:
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.17.0
+    hooks:
+      - id: gitlint
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
       - id: check-added-large-files
         args: [--maxkb=1024]
@@ -26,7 +31,10 @@ repos:
       - id: check-mailmap
       - id: forbid-binary
         exclude: .*\.png$
+      - id: git-check
+      - id: git-dirty
       - id: script-must-have-extension
+        exclude: .*\.bats$
       - id: script-must-not-have-extension
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.30.0
@@ -43,18 +51,34 @@ repos:
       - id: gitlab-ci-linter
   - repo: local
     hooks:
+      - id: anti-todo
+        name: anti-todo
+        entry: (?i)#\s*\b(wip|todo|tbd)\b
+        language: pygrep
+        types: [text]
+        stages: [push, manual]
       - id: shfmt
         name: shfmt
         entry: shfmt -i 4
         language: system
         types: [shell]
+        exclude: .*\.bats$
+      - id: shfmt-bats
+        name: shfmt-bats
+        entry: shfmt -ln bats -i 4
+        language: system
+        files: .*\.bats$
       - id: shellcheck
         name: shellcheck
-        entry: shellcheck
+        entry: shellcheck -x -P scripts:scripts/shellib
         language: system
         types: [shell]
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.2.6
+    hooks:
+      - id: gitleaks
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.56.0
+    rev: v1.62.3
     hooks:
       - id: terraform_fmt
         args:
@@ -66,6 +90,6 @@ repos:
           - --args=--enable-rule=terraform_documented_variables
       - id: checkov
   - repo: https://github.com/ansible-community/ansible-lint
-    rev: v5.2.1
+    rev: v5.3.1
     hooks:
       - id: ansible-lint
