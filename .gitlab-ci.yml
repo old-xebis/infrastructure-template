@@ -245,7 +245,8 @@ deploy-dev:
     - apk update
     - apk add bash curl
   script:
-    - scripts/dev-env >> dev.env
+    - touch dev.env
+    - if scripts/dev-env; then echo "DEV_ENV='true'" >>dev.env; fi
     - . dev.env
     - |
       if [[ $DEV_ENV == "true" ]]; then
