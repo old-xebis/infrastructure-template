@@ -31,6 +31,7 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 ## Table of Contents
 
 - [Features](#features)
+  - [Environment Configuration](#environment-configuration)
   - [Images](#images)
 - [Installation and Configuration](#installation-and-configuration)
   - [Set up GitLab CI](#set-up-gitlab-ci)
@@ -79,6 +80,13 @@ Automatically managed environments:
 Manually managed environments:
 
 - Create, update, or destroy any environment
+
+### Environment Configuration
+
+All machines:
+
+- have updated packages
+- are rebooted when the update (or any earlier operation) requires reboot
 
 ### Images
 
