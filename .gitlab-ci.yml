@@ -83,6 +83,10 @@ deploy-prod:
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
     - PROD_IP=$(terraform output -raw hcloud_server_test_ipv4_address || echo "")
     - echo "PROD_IP=$PROD_IP" >> prod.env
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   artifacts:
     reports:
       dotenv: prod.env
@@ -110,6 +114,10 @@ config-prod:
         ansible -u gitlab-ci -i "$PROD_IP," all -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i "$PROD_IP," playbook.yml
       fi
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   environment:
     name: Production
   needs:
@@ -131,6 +139,10 @@ deploy-stag:
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
     - STAG_IP=$(terraform output -raw hcloud_server_test_ipv4_address || echo "")
     - echo "STAG_IP=$STAG_IP" >> stag.env
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   artifacts:
     reports:
       dotenv: stag.env
@@ -158,6 +170,10 @@ config-stag:
         ansible -u gitlab-ci -i "$STAG_IP," all -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i "$STAG_IP," playbook.yml
       fi
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   environment:
     name: Staging
   needs:
@@ -179,6 +195,10 @@ deploy-test:
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
     - TEST_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
     - echo "TEST_IP=$TEST_IP" >> test.env
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   artifacts:
     reports:
       dotenv: test.env
@@ -205,6 +225,10 @@ config-test:
     - chmod 644 ~/.ssh/known_hosts
     - ansible -u gitlab-ci -i "$TEST_IP," all -m ansible.builtin.ping
     - ansible-playbook -u gitlab-ci -i "$TEST_IP," playbook.yml
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   environment:
     name: Testing/$CI_COMMIT_REF_SLUG
   needs:
@@ -224,6 +248,10 @@ destroy-test:
     - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   environment:
     name: Testing/$CI_COMMIT_REF_SLUG
     action: stop
@@ -256,6 +284,10 @@ deploy-dev:
         DEV_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
         echo "DEV_IP=$DEV_IP" >> dev.env
       fi
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   artifacts:
     reports:
       dotenv: dev.env
@@ -286,6 +318,10 @@ config-dev:
         ansible -u gitlab-ci -i "$DEV_IP," all -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i "$DEV_IP," playbook.yml
       fi
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
   needs:
@@ -309,6 +345,10 @@ destroy-dev:
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - .terraform
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
     action: stop
