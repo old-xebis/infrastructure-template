@@ -266,6 +266,11 @@ deploy-dev:
     auto_stop_in: 1 day
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+      changes:
+        - "**/*{.tf,.tf.json,.tfvars,.tfvars.json}"
+        - .terraform.lock.hcl
+        - "{cloud-config,playbook}.yml"
+        - roles/**/*
   resource_group: development/$CI_COMMIT_REF_SLUG
 
 config-dev:
@@ -292,6 +297,11 @@ config-dev:
     - deploy-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+      changes:
+        - "**/*{.tf,.tf.json,.tfvars,.tfvars.json}"
+        - .terraform.lock.hcl
+        - "{cloud-config,playbook}.yml"
+        - roles/**/*
   resource_group: development/$CI_COMMIT_REF_SLUG
 
 destroy-dev:
@@ -316,6 +326,11 @@ destroy-dev:
     - deploy-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+      changes:
+        - "**/*{.tf,.tf.json,.tfvars,.tfvars.json}"
+        - .terraform.lock.hcl
+        - "{cloud-config,playbook}.yml"
+        - roles/**/*
       when: manual
       allow_failure: true
 
