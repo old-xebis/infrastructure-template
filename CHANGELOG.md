@@ -1,3 +1,11 @@
+# [0.8.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.7.0...v0.8.0) (2022-01-09)
+
+
+### Features
+
+* common role updates packages and eventually reboots ([d23243b](https://gitlab.com/xebis/infrastructure-template/commit/d23243b8d3bd5b8748e753f23c1e568305d754ec))
+* revert dev env run only on tf and ansible changed files ([e392867](https://gitlab.com/xebis/infrastructure-template/commit/e39286793d1bc01d891f5574cf58a46881387c17))
+
 # [0.7.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.6.0...v0.7.0) (2022-01-08)
 
 
