@@ -71,7 +71,6 @@ Automatically managed environments:
   - Releases and creates *release* tag when a commit starting `feat` or `fix` is present in the history from the previous release
 - On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
 - On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
-  - It runs only when there's a change in `**/*{.tf,.tf.json,.tfvars,.tfvars.json}`, `.terraform.lock.hcl`, `{cloud-config,playbook}.yml`, or `roles/**/*`
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
   - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using the **Run pipeline** *button in the GitLab UI* or created by using the *GitLab WebIDE*
   - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's present the environment variable `ENV_CREATE` or `CREATE_ENV`
