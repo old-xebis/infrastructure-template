@@ -10,6 +10,9 @@ setup() {
 
     export TEST_ARGV=('scripts/dev-env')
 
+    unset CREATE_ENV ENV_CREATE
+    unset SKIP_ENV ENV_SKIP
+
     . scripts/dev-env
 }
 
