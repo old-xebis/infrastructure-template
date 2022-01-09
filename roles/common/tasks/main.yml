@@ -1,4 +1,21 @@
 ---
-- name: It works!
-  ansible.builtin.debug:
-    msg: It works!
+- name: Upgrade all deb packages
+  become: true
+  ansible.builtin.apt:
+    cache_valid_time: 900
+    upgrade: "yes"
+    autoclean: true
+    autoremove: true
+
+- name: Check if reboot is required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+    get_attributes: false
+    get_checksum: false
+    get_mime: false
+  register: reboot_required
+  changed_when: reboot_required.stat.exists
+  notify: Reboot machine
+
+- name: Enforce reboot now rather than at the end of the playbook
+  ansible.builtin.meta: flush_handlers

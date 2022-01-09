@@ -246,10 +246,10 @@ deploy-dev:
     - apk add bash curl
   script:
     - touch dev.env
-    - if scripts/dev-env; then echo "DEV_ENV='true'" >>dev.env; fi
+    - if scripts/dev-env; then echo "DEV_ENV=true" >>dev.env; fi
     - . dev.env
     - |
-      if [[ $DEV_ENV == "true" ]]; then
+      if [ "${DEV_ENV:-skip}" != 'skip' ]; then
         echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
@@ -266,11 +266,6 @@ deploy-dev:
     auto_stop_in: 1 day
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
-      changes:
-        - "**/*{.tf,.tf.json,.tfvars,.tfvars.json}"
-        - .terraform.lock.hcl
-        - "{cloud-config,playbook}.yml"
-        - roles/**/*
   resource_group: development/$CI_COMMIT_REF_SLUG
 
 config-dev:
@@ -280,7 +275,7 @@ config-dev:
     - echo "DEV_ENV=$DEV_ENV"
     - echo "DEV_IP=$DEV_IP"
     - |
-      if [[ $DEV_ENV == "true" ]]; then
+      if [ "${DEV_ENV:-skip}" != 'skip' ]; then
         echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         eval $(ssh-agent -s)
         echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
@@ -297,11 +292,6 @@ config-dev:
     - deploy-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
-      changes:
-        - "**/*{.tf,.tf.json,.tfvars,.tfvars.json}"
-        - .terraform.lock.hcl
-        - "{cloud-config,playbook}.yml"
-        - roles/**/*
   resource_group: development/$CI_COMMIT_REF_SLUG
 
 destroy-dev:
@@ -314,7 +304,7 @@ destroy-dev:
   script:
     - echo "DEV_ENV=$DEV_ENV"
     - |
-      if [[ $DEV_ENV == "true" ]]; then
+      if [ "${DEV_ENV:-skip}" != 'skip' ]; then
         echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
@@ -326,11 +316,6 @@ destroy-dev:
     - deploy-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
-      changes:
-        - "**/*{.tf,.tf.json,.tfvars,.tfvars.json}"
-        - .terraform.lock.hcl
-        - "{cloud-config,playbook}.yml"
-        - roles/**/*
       when: manual
       allow_failure: true
 

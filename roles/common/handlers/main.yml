@@ -1,0 +1,7 @@
+---
+- name: Reboot machine
+  become: true
+  reboot:
+    reboot_timeout: 600
+    msg: Rebooting...
+  listen: Reboot machine
