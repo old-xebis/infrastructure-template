@@ -1,0 +1,5 @@
+---
+plugin: hcloud
+label_selector: env=env-slug # Replace with environment variable $TF_VAR_ENV_SLUG, see README.md#caveats
+groups:
+  env: inventory_hostname
