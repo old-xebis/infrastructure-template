@@ -1,3 +1,10 @@
+# [0.9.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.8.0...v0.9.0) (2022-01-10)
+
+
+### Features
+
+* add ansible dynamic inventory plugin for the hetzner cloud ([b211537](https://gitlab.com/xebis/infrastructure-template/commit/b2115376876d525b1dbc27acafc745effae852c6))
+
 # [0.8.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.7.0...v0.8.0) (2022-01-09)
 
 
