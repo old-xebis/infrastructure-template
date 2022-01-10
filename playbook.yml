@@ -1,6 +1,6 @@
 ---
-- name: Set up test
+- name: Set up all machines
   hosts:
-    - all
+    - env # Use `env` instead of `all` or `hcloud`, see README.md#caveats
   roles:
     - common

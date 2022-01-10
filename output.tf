@@ -8,11 +8,6 @@ output "environment_tier" {
   description = "Environment tier (for debugging)"
 }
 
-output "environment_prefix" {
-  value       = local.prefix
-  description = "Environment specific resource names prefix (for debugging)"
-}
-
 output "environment_count" {
   value       = local.count
   description = "Environment specific resource count (for debugging)"

@@ -24,6 +24,6 @@ variable "ENV_TIER" {
   }
 }
 locals {
-  prefix = "${var.ENV_SLUG}-"
-  count  = contains(["production", "staging"], var.ENV_TIER) ? 0 : 1
+  env   = var.ENV_SLUG
+  count = contains(["production", "staging"], var.ENV_TIER) ? 0 : 1
 }

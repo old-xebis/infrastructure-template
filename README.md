@@ -32,6 +32,7 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 - [Features](#features)
   - [Environment Configuration](#environment-configuration)
+  - [Caveats](#caveats)
   - [Images](#images)
 - [Installation and Configuration](#installation-and-configuration)
   - [Set up GitLab CI](#set-up-gitlab-ci)
@@ -85,7 +86,15 @@ Manually managed environments:
 All machines:
 
 - have updated packages
-- are rebooted when the update (or any earlier operation) requires reboot
+- are rebooted when the update (or any earlier operation) requires a reboot
+
+### Caveats
+
+One Hetzner cloud project is used for all environments, which brings a few caveats to keep in one's mind:
+
+- To distinguish machines between environments and to separate them from manually created machines they are named with prefix `env-slug-` and labeled `env=env-slug` by Terraform
+- To use Ansible, inventory file `hcloud.yml` must have replaced `env-slug` with an **environment slug** before any local manual use
+- Use Ansible group `env` instead of groups `all` or `hcloud`, as these groups contain all machines from all environments and eventually manually created machines as well
 
 ### Images
 
@@ -159,11 +168,13 @@ terraform init -reconfigure \
 
 - Create or update environment by `terraform apply` or `terraform apply -auto-approve`
 - Get server IP address by `terraform output hcloud_server_test_ipv4_address`
-- SSH by `ssh root@$(terraform output -raw hcloud_server_test_ipv4_address)`
+- Direct SSH by `ssh user@$(terraform output -raw hcloud_server_test_ipv4_address)`
 - Ansible:
-  - Ping: `ansible -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), all -m ansible.builtin.ping`
-  - Get all facts: `ansible -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), all -m ansible.builtin.setup`
-  - Configure with playbook: `ansible-playbook -u root -i $(terraform output -raw hcloud_server_test_ipv4_address), playbook.yml`
+  - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`
+  - Ping: `ansible -u user -i hcloud.yml env -m ansible.builtin.ping`
+  - List or graph inventory: `ansible-inventory -u user -i hcloud.yml --list # or --graph`
+  - Get all facts: `ansible -u user -i hcloud.yml env -m ansible.builtin.setup`
+  - Configure with playbook: `ansible-playbook -u user -i hcloud.yml playbook.yml`
 - Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`
 
 Uninitialize local workspace if you wish:
@@ -257,6 +268,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
   - [checkov](https://www.checkov.io/)
 - [Ansible](https://www.ansible.com/)
   - [GitHub - ansible-community/ansible-lint: Best practices checker for Ansible](https://github.com/ansible-community/ansible-lint)
+  - [GitHub - ansible-collections/hetzner.hcloud: A collection containing modules to manage resources on the Hetzner Cloud.](https://github.com/ansible-collections/hetzner.hcloud)
 - [cloud-init](https://cloud-init.io/)
 - [Docker Hub - hashicorp/terraform](https://hub.docker.com/r/hashicorp/terraform/)
 - [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)

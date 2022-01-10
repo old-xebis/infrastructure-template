@@ -111,8 +111,9 @@ config-prod:
         chmod 700 ~/.ssh
         ssh-keyscan "$PROD_IP" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        ansible -u gitlab-ci -i "$PROD_IP," all -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i "$PROD_IP," playbook.yml
+        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
   cache:
     key: $CI_COMMIT_REF_SLUG
@@ -167,8 +168,9 @@ config-stag:
         chmod 700 ~/.ssh
         ssh-keyscan "$STAG_IP" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        ansible -u gitlab-ci -i "$STAG_IP," all -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i "$STAG_IP," playbook.yml
+        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
   cache:
     key: $CI_COMMIT_REF_SLUG
@@ -223,8 +225,9 @@ config-test:
     - chmod 700 ~/.ssh
     - ssh-keyscan "$TEST_IP" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ansible -u gitlab-ci -i "$TEST_IP," all -m ansible.builtin.ping
-    - ansible-playbook -u gitlab-ci -i "$TEST_IP," playbook.yml
+    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+    - ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
+    - ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -315,8 +318,9 @@ config-dev:
         chmod 700 ~/.ssh
         ssh-keyscan "$DEV_IP" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        ansible -u gitlab-ci -i "$DEV_IP," all -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i "$DEV_IP," playbook.yml
+        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
   cache:
     key: $CI_COMMIT_REF_SLUG
