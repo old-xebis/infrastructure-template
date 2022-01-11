@@ -247,8 +247,20 @@ destroy-test:
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - *default_before_script
+    - apk add git
   script:
     - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - |
+      if [ ! -d .git ]; then
+        git init -b main
+        git remote add origin $CI_REPOSITORY_URL
+        git fetch origin $CI_COMMIT_SHA --depth=1
+        git reset --hard FETCH_HEAD
+      fi
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
   cache:
