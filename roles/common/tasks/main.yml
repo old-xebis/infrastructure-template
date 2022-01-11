@@ -19,3 +19,16 @@
 
 - name: Enforce reboot now rather than at the end of the playbook
   ansible.builtin.meta: flush_handlers
+
+- name: Install fail2ban deb package
+  become: true
+  apt:
+    name: fail2ban
+    state: present
+
+- name: Start service fail2ban
+  become: true
+  service:
+    name: fail2ban
+    enabled: true
+    state: started
