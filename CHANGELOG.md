@@ -1,3 +1,10 @@
+# [0.10.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.9.0...v0.10.0) (2022-01-11)
+
+
+### Features
+
+* fail2ban ([ffe42a2](https://gitlab.com/xebis/infrastructure-template/commit/ffe42a21c73589fe0bf03c80ccad886e368e2dce))
+
 # [0.9.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.8.0...v0.9.0) (2022-01-10)
 
 
