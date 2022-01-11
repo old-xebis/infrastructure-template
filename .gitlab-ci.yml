@@ -352,7 +352,7 @@ destroy-dev:
       if [ "${DEV_ENV:-skip}" != 'skip' ]; then
         echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         if [ ! -d .git ]; then
-          git init
+          git init -b main
           git remote add origin $CI_REPOSITORY_URL
           git fetch origin $CI_COMMIT_SHA --depth=1
           git reset --hard FETCH_HEAD
