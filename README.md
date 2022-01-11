@@ -87,6 +87,7 @@ All machines:
 
 - have updated packages
 - are rebooted when the update (or any earlier operation) requires a reboot
+- have fail2ban installed, set up, and running
 
 ### Caveats
 
