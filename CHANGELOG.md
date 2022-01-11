@@ -1,3 +1,11 @@
+# [0.11.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.10.0...v0.11.0) (2022-01-11)
+
+
+### Features
+
+* destroy dev env should work on deleted branches as well ([7fb69a4](https://gitlab.com/xebis/infrastructure-template/commit/7fb69a40c99673664c7f40d5570d1f0dd8152ff7))
+* destroy test env should work on deleted branches as well ([bd4c5ef](https://gitlab.com/xebis/infrastructure-template/commit/bd4c5efbf317dc5b9dd0bd56119dbc118dfa52f2))
+
 # [0.10.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.9.0...v0.10.0) (2022-01-11)
 
 
