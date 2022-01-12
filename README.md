@@ -77,6 +77,10 @@ Automatically managed environments:
   - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's present the environment variable `ENV_CREATE` or `CREATE_ENV`
   - It doesn't run when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or the commit message contains `[env skip]` or `[skip env]`, using any capitalization
 
+**Development/_branch_** environment create or not decision:
+
+![Development environment create or not](images/development-environment-create-or-not.png)
+
 Manually managed environments:
 
 - Create, update, or destroy any environment
