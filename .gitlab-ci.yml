@@ -100,6 +100,9 @@ deploy-prod:
 config-prod:
   stage: config
   image: gableroux/ansible:latest
+  before_script:
+    - *default_before_script
+    - pip install hcloud
   script:
     - echo "PROD_IP=$PROD_IP"
     - |
@@ -157,6 +160,9 @@ deploy-stag:
 config-stag:
   stage: config
   image: gableroux/ansible:latest
+  before_script:
+    - *default_before_script
+    - pip install hcloud
   script:
     - echo "STAG_IP=$STAG_IP"
     - |
@@ -216,6 +222,9 @@ deploy-test:
 config-test:
   stage: config
   image: gableroux/ansible:latest
+  before_script:
+    - *default_before_script
+    - pip install hcloud
   script:
     - echo "TEST_IP=$TEST_IP"
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
@@ -285,7 +294,7 @@ deploy-dev:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   before_script:
-    - apk update
+    - *default_before_script
     - apk add bash curl
   script:
     - touch dev.env
@@ -318,6 +327,9 @@ deploy-dev:
 config-dev:
   stage: config
   image: gableroux/ansible:latest
+  before_script:
+    - *default_before_script
+    - pip install hcloud
   script:
     - echo "DEV_ENV=$DEV_ENV"
     - echo "DEV_IP=$DEV_IP"
