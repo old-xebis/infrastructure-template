@@ -61,17 +61,21 @@ Optimized for [GitHub flow](https://guides.github.com/introduction/flow/), easil
 
 Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), runs tests, deployments, releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
 
-Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible over SSH.
+Environments are managed in stages:
+
+- **Deploy**: environment is provisioned by Terraform at Hetzner Cloud
+- **Config**: environment is configured by cloud-init and Ansible over SSH
+- **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
 ![Deploy in more detail](images/deploy.png)
 
 Automatically managed environments:
 
-- On *release* tag runs **production** environment deploy
-- On `main` branch commit runs **staging** environment deploy
+- On *release* tag runs **production** environment deploy and config
+- On `main` branch commit runs **staging** environment deploy and config
   - Releases and creates *release* tag when a commit starting `feat` or `fix` is present in the history from the previous release
-- On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
-- On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
+- On *pre-release* tag runs **testing/_tag_** environment deploy, config, and destroy with 1 week automatic, or manual destruction
+- On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy, config, and destroy with 1 week automatic, or manual destruction:
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
   - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using the **Run pipeline** *button in the GitLab UI* or created by using the *GitLab WebIDE*
   - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's present the environment variable `ENV_CREATE` or `CREATE_ENV`
