@@ -31,7 +31,7 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 ## Table of Contents
 
 - [Features](#features)
-  - [Environment Configuration](#environment-configuration)
+  - [Environment](#environment)
   - [Caveats](#caveats)
   - [Images](#images)
 - [Installation and Configuration](#installation-and-configuration)
@@ -40,6 +40,13 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 - [Usage](#usage)
   - [GitLab CI](#gitlab-ci)
   - [Local Usage](#local-usage)
+  - [Terraform Documentation](#terraform-documentation)
+    - [Requirements](#requirements)
+    - [Providers](#providers)
+    - [Modules](#modules)
+    - [Resources](#resources)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
 - [Contributing](#contributing)
   - [Testing](#testing)
 - [To-Do list](#to-do-list)
@@ -59,19 +66,23 @@ Optimized for [GitHub flow](https://guides.github.com/introduction/flow/), easil
 
 ![Example of the full workflow](images/workflow-full.png)
 
-Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), runs tests, deployments, releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) for full feature list.
+Automatically checks conventional commits, validates Markdown, YAML, shell scripts, Terraform (HCL), runs static security analysis, terraform-doc, tests, deployments, releases, and so on. See [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) and [Notes And References](#notes-and-references) for full feature list.
 
-Environments are provisioned by Terraform at Hetzner Cloud, configured by cloud-init and Ansible over SSH.
+Environments are managed in stages:
+
+- **Deploy**: environment is provisioned by Terraform at Hetzner Cloud
+- **Config**: environment is configured by cloud-init and Ansible over SSH
+- **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
 ![Deploy in more detail](images/deploy.png)
 
 Automatically managed environments:
 
-- On *release* tag runs **production** environment deploy
-- On `main` branch commit runs **staging** environment deploy
+- On *release* tag runs **production** environment deploy and config
+- On `main` branch commit runs **staging** environment deploy and config
   - Releases and creates *release* tag when a commit starting `feat` or `fix` is present in the history from the previous release
-- On *pre-release* tag runs **testing/_tag_** environment deploy with 1 week or manual destruction
-- On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy with 1 day or manual destruction:
+- On *pre-release* tag runs **testing/_tag_** environment deploy, config, and destroy with 1 week automatic, or manual destruction
+- On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment deploy, config, and destroy with 1 week automatic, or manual destruction:
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
   - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using the **Run pipeline** *button in the GitLab UI* or created by using the *GitLab WebIDE*
   - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's present the environment variable `ENV_CREATE` or `CREATE_ENV`
@@ -85,9 +96,9 @@ Manually managed environments:
 
 - Create, update, or destroy any environment
 
-### Environment Configuration
+### Environment
 
-All machines:
+Creates one machine for development and testing environments, or intentionally zero machines for staging and production environments. Each machine:
 
 - have updated packages
 - are rebooted when the update (or any earlier operation) requires a reboot
@@ -190,6 +201,49 @@ rm -rf .terraform # Uninit local workspace, this step is required if you would l
 
 Commit and push to run validations.
 
+### Terraform Documentation
+
+<!-- BEGIN_TF_DOCS -->
+#### Requirements
+
+| Name | Version |
+|------|---------|
+| hcloud | 1.32.0 |
+
+#### Providers
+
+| Name | Version |
+|------|---------|
+| hcloud | 1.32.0 |
+
+#### Modules
+
+No modules.
+
+#### Resources
+
+| Name | Type |
+|------|------|
+| [hcloud_server.test](https://registry.terraform.io/providers/hetznercloud/hcloud/1.32.0/docs/resources/server) | resource |
+
+#### Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| ENV\_SLUG | The environment slug, used to prefix resource names to allow co-existence of multiple environments in one Hetzner Cloud project | `string` | n/a | yes |
+| ENV\_TIER | The environment tier, used to determine amount of resources for each environment | `string` | `"other"` | no |
+
+#### Outputs
+
+| Name | Description |
+|------|-------------|
+| environment\_count | Environment specific resource count (for debugging) |
+| environment\_slug | Environment slug (for debugging) |
+| environment\_tier | Environment tier (for debugging) |
+| hcloud\_server\_test\_ipv4\_address | Test server public IPv4 address |
+| hcloud\_server\_test\_name | Test server name |
+<!-- END_TF_DOCS -->
+
 ## Contributing
 
 Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting merge requests to us.
@@ -271,6 +325,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
   - [GitHub - antonbabenko/pre-commit-terraform: pre-commit git hooks to take care of Terraform configurations](https://github.com/antonbabenko/pre-commit-terraform)
   - [GitHub - terraform-linters/tflint: A Pluggable Terraform Linter](https://github.com/terraform-linters/tflint)
   - [checkov](https://www.checkov.io/)
+  - [terraform-docs: Generate Terraform modules documentation in various formats](https://terraform-docs.io/)
 - [Ansible](https://www.ansible.com/)
   - [GitHub - ansible-community/ansible-lint: Best practices checker for Ansible](https://github.com/ansible-community/ansible-lint)
   - [GitHub - ansible-collections/hetzner.hcloud: A collection containing modules to manage resources on the Hetzner Cloud.](https://github.com/ansible-collections/hetzner.hcloud)

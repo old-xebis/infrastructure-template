@@ -89,6 +89,11 @@ repos:
         args:
           - --args=--enable-rule=terraform_documented_variables
       - id: checkov
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: v0.16.0
+    hooks:
+      - id: terraform-docs-go
+        args: [.]
   - repo: https://github.com/ansible-community/ansible-lint
     rev: v5.3.1
     hooks:
