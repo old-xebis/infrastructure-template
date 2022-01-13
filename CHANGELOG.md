@@ -1,3 +1,10 @@
+# [0.12.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.11.0...v0.12.0) (2022-01-13)
+
+
+### Features
+
+* add terraform-docs ([70cf1a1](https://gitlab.com/xebis/infrastructure-template/commit/70cf1a1cb728c3d2bd53c9cf080fd810de9fc37e))
+
 # [0.11.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.10.0...v0.11.0) (2022-01-11)
 
 
