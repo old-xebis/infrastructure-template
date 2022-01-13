@@ -1,0 +1,9 @@
+---
+formatter: markdown table
+
+output:
+  file: README.md
+
+settings:
+  anchor: false
+  indent: 4
