@@ -94,6 +94,8 @@ repos:
     hooks:
       - id: terraform-docs-go
         args: [.]
+        files: ^README.md$
+        types_or: [terraform]
   - repo: https://github.com/ansible-community/ansible-lint
     rev: v5.3.1
     hooks:

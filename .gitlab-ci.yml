@@ -81,8 +81,6 @@ deploy-prod:
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
-    - PROD_IP=$(terraform output -raw hcloud_server_test_ipv4_address || echo "")
-    - echo "PROD_IP=$PROD_IP" >> prod.env
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -104,17 +102,18 @@ config-prod:
     - *default_before_script
     - pip install hcloud
   script:
-    - echo "PROD_IP=$PROD_IP"
+    - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+    - SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
     - |
-      if [ -n "$PROD_IP" ]; then
-        echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+      if [ -n "$SSH_HOST_LIST" ]; then
+        echo "Configure IPs: $SSH_HOST_LIST"
         eval $(ssh-agent -s)
         echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
-        ssh-keyscan "$PROD_IP" >> ~/.ssh/known_hosts
+        ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
         ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
@@ -141,8 +140,6 @@ deploy-stag:
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
-    - STAG_IP=$(terraform output -raw hcloud_server_test_ipv4_address || echo "")
-    - echo "STAG_IP=$STAG_IP" >> stag.env
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -164,17 +161,18 @@ config-stag:
     - *default_before_script
     - pip install hcloud
   script:
-    - echo "STAG_IP=$STAG_IP"
+    - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+    - SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
     - |
-      if [ -n "$STAG_IP" ]; then
-        echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+      if [ -n "$SSH_HOST_LIST" ]; then
+        echo "Configure IPs: $SSH_HOST_LIST"
         eval $(ssh-agent -s)
         echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
-        ssh-keyscan "$STAG_IP" >> ~/.ssh/known_hosts
+        ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
         ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
@@ -201,8 +199,6 @@ deploy-test:
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
-    - TEST_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
-    - echo "TEST_IP=$TEST_IP" >> test.env
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -226,17 +222,21 @@ config-test:
     - *default_before_script
     - pip install hcloud
   script:
-    - echo "TEST_IP=$TEST_IP"
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - eval $(ssh-agent -s)
-    - echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - ssh-keyscan "$TEST_IP" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
     - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
-    - ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
-    - ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
+    - SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
+    - |
+      if [ -n "$SSH_HOST_LIST" ]; then
+        echo "Configure IPs: $SSH_HOST_LIST"
+        eval $(ssh-agent -s)
+        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
+        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
+      fi
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -305,8 +305,6 @@ deploy-dev:
         echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
-        DEV_IP=$(terraform output -raw hcloud_server_test_ipv4_address)
-        echo "DEV_IP=$DEV_IP" >> dev.env
       fi
   cache:
     key: $CI_COMMIT_REF_SLUG
@@ -329,22 +327,26 @@ config-dev:
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
+    - apk add jq
     - pip install hcloud
   script:
     - echo "DEV_ENV=$DEV_ENV"
-    - echo "DEV_IP=$DEV_IP"
     - |
       if [ "${DEV_ENV:-skip}" != 'skip' ]; then
         echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-        eval $(ssh-agent -s)
-        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        ssh-keyscan "$DEV_IP" >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
         sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
-        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
+        SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
+        if [ -n "$SSH_HOST_LIST" ]; then
+          echo "Configure IPs: $SSH_HOST_LIST"
+          eval $(ssh-agent -s)
+          echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
+          ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
+        fi
       fi
   cache:
     key: $CI_COMMIT_REF_SLUG

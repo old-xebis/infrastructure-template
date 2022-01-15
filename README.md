@@ -187,8 +187,9 @@ terraform init -reconfigure \
 - Direct SSH by `ssh user@$(terraform output -raw hcloud_server_test_ipv4_address)`
 - Ansible:
   - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`
+  - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
+  - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
   - Ping: `ansible -u user -i hcloud.yml env -m ansible.builtin.ping`
-  - List or graph inventory: `ansible-inventory -u user -i hcloud.yml --list # or --graph`
   - Get all facts: `ansible -u user -i hcloud.yml env -m ansible.builtin.setup`
   - Configure with playbook: `ansible-playbook -u user -i hcloud.yml playbook.yml`
 - Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`
@@ -332,6 +333,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [cloud-init](https://cloud-init.io/)
 - [Docker Hub - hashicorp/terraform](https://hub.docker.com/r/hashicorp/terraform/)
 - [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)
+- [jq: jq is a lightweight and flexible command-line JSON processor](https://stedolan.github.io/jq/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
 
 ### Recommendations
