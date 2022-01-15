@@ -187,8 +187,9 @@ terraform init -reconfigure \
 - Direct SSH by `ssh user@$(terraform output -raw hcloud_server_test_ipv4_address)`
 - Ansible:
   - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`
+  - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
+  - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
   - Ping: `ansible -u user -i hcloud.yml env -m ansible.builtin.ping`
-  - List or graph inventory: `ansible-inventory -u user -i hcloud.yml --list # or --graph`
   - Get all facts: `ansible -u user -i hcloud.yml env -m ansible.builtin.setup`
   - Configure with playbook: `ansible-playbook -u user -i hcloud.yml playbook.yml`
 - Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`
@@ -206,15 +207,15 @@ Commit and push to run validations.
 <!-- BEGIN_TF_DOCS -->
 #### Requirements
 
-| Name | Version |
-|------|---------|
-| hcloud | 1.32.0 |
+| Name   | Version |
+| ------ | ------- |
+| hcloud | 1.32.0  |
 
 #### Providers
 
-| Name | Version |
-|------|---------|
-| hcloud | 1.32.0 |
+| Name   | Version |
+| ------ | ------- |
+| hcloud | 1.32.0  |
 
 #### Modules
 
@@ -222,26 +223,26 @@ No modules.
 
 #### Resources
 
-| Name | Type |
-|------|------|
+| Name                                                                                                           | Type     |
+| -------------------------------------------------------------------------------------------------------------- | -------- |
 | [hcloud_server.test](https://registry.terraform.io/providers/hetznercloud/hcloud/1.32.0/docs/resources/server) | resource |
 
 #### Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| ENV\_SLUG | The environment slug, used to prefix resource names to allow co-existence of multiple environments in one Hetzner Cloud project | `string` | n/a | yes |
-| ENV\_TIER | The environment tier, used to determine amount of resources for each environment | `string` | `"other"` | no |
+| Name      | Description                                                                                                                     | Type     | Default   | Required |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------- | -------- | --------- | :------: |
+| ENV\_SLUG | The environment slug, used to prefix resource names to allow co-existence of multiple environments in one Hetzner Cloud project | `string` | n/a       |   yes    |
+| ENV\_TIER | The environment tier, used to determine amount of resources for each environment                                                | `string` | `"other"` |    no    |
 
 #### Outputs
 
-| Name | Description |
-|------|-------------|
-| environment\_count | Environment specific resource count (for debugging) |
-| environment\_slug | Environment slug (for debugging) |
-| environment\_tier | Environment tier (for debugging) |
-| hcloud\_server\_test\_ipv4\_address | Test server public IPv4 address |
-| hcloud\_server\_test\_name | Test server name |
+| Name                                | Description                                         |
+| ----------------------------------- | --------------------------------------------------- |
+| environment\_count                  | Environment specific resource count (for debugging) |
+| environment\_slug                   | Environment slug (for debugging)                    |
+| environment\_tier                   | Environment tier (for debugging)                    |
+| hcloud\_server\_test\_ipv4\_address | Test server public IPv4 address                     |
+| hcloud\_server\_test\_name          | Test server name                                    |
 <!-- END_TF_DOCS -->
 
 ## Contributing
