@@ -338,10 +338,10 @@ config-dev:
         echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
         mkdir -p ~/.ssh
         chmod 700 ~/.ssh
-        SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
-        ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
         sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
+        SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
+        [ -n "$SSH_HOST_LIST" ] && ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
         ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
