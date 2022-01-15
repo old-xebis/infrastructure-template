@@ -100,6 +100,7 @@ config-prod:
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
+    - apk add jq
     - pip install hcloud
   script:
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
@@ -159,6 +160,7 @@ config-stag:
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
+    - apk add jq
     - pip install hcloud
   script:
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
@@ -220,6 +222,7 @@ config-test:
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
+    - apk add jq
     - pip install hcloud
   script:
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
