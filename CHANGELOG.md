@@ -1,3 +1,10 @@
+## [0.12.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.12.0...v0.12.1) (2022-01-15)
+
+
+### Bug Fixes
+
+* terraform readme docs reformat fails ci lint job ([cbabf0b](https://gitlab.com/xebis/infrastructure-template/commit/cbabf0b1d7327caed544e9e4d3d0d524661f49cc))
+
 # [0.12.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.11.0...v0.12.0) (2022-01-13)
 
 
