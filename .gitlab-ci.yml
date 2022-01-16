@@ -163,6 +163,9 @@ test-nightly:
   resource_group: testing/$CI_COMMIT_REF_SLUG
 
 .env-dev:
+  before_script:
+    - *default_before_script
+    - apk add bash curl
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
     url: https://$CI_ENVIRONMENT_SLUG.example.com
@@ -211,9 +214,6 @@ destroy-test:
 
 deploy-dev:
   extends: [.deploy-env, .env-dev]
-  before_script:
-    - *default_before_script
-    - apk add bash curl
   script:
     - |
       if scripts/dev-env; then
@@ -227,6 +227,10 @@ deploy-dev:
 
 config-dev:
   extends: [.config-env, .env-dev]
+  before_script:
+    - *default_before_script
+    - apk add bash curl jq
+    - pip install hcloud
   script:
     - |
       if scripts/dev-env; then
@@ -250,6 +254,9 @@ config-dev:
 
 destroy-dev:
   extends: [.destroy-env, .env-dev]
+  before_script:
+    - *default_before_script
+    - apk add bash curl git
   script:
     - |
       if scripts/dev-env; then
