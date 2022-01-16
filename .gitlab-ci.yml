@@ -5,17 +5,17 @@ workflow:
       when: never
     - when: always
 
-default:
-  image: alpine:latest
-  before_script: &default_before_script
-    - apk -U upgrade
-
 stages:
   - validate
   - deploy
   - config
   - destroy
   - release
+
+default:
+  image: alpine:latest
+  before_script: &default_before_script
+    - apk -U upgrade
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -49,28 +49,28 @@ lint:
   rules:
     - when: always
 
-test-full:
+.test:
   stage: validate
   before_script:
     - *default_before_script
     - apk add bats
   script:
     - scripts/test full
+
+test-full:
+  extends: .test
   interruptible: true
   rules:
     - if: $CI_PIPELINE_SOURCE != "schedule"
 
 test-nightly:
-  stage: validate
-  before_script:
-    - *default_before_script
-    - apk add bats
+  extends: .test
   script:
     - scripts/test nightly
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
-deploy-prod:
+.deploy-env:
   stage: deploy
   image:
     name: hashicorp/terraform:light
@@ -85,17 +85,8 @@ deploy-prod:
     key: $CI_COMMIT_REF_SLUG
     paths:
       - .terraform
-  artifacts:
-    reports:
-      dotenv: prod.env
-  environment:
-    name: Production
-    url: https://example.com
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
-  resource_group: production
 
-config-prod:
+.config-env:
   stage: config
   image: gableroux/ansible:latest
   before_script:
@@ -118,141 +109,8 @@ config-prod:
         ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
         ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
       fi
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  environment:
-    name: Production
-  needs:
-    - deploy-prod
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
-  resource_group: production
 
-deploy-stag:
-  stage: deploy
-  image:
-    name: hashicorp/terraform:light
-    entrypoint:
-      - /usr/bin/env
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  script:
-    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
-    - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  artifacts:
-    reports:
-      dotenv: stag.env
-  environment:
-    name: Staging
-    url: https://$CI_ENVIRONMENT_SLUG.example.com
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
-  resource_group: staging
-
-config-stag:
-  stage: config
-  image: gableroux/ansible:latest
-  before_script:
-    - *default_before_script
-    - apk add jq
-    - pip install hcloud
-  script:
-    - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
-    - SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
-    - |
-      if [ -n "$SSH_HOST_LIST" ]; then
-        echo "Configure IPs: $SSH_HOST_LIST"
-        eval $(ssh-agent -s)
-        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
-        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
-      fi
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  environment:
-    name: Staging
-  needs:
-    - deploy-stag
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
-  resource_group: staging
-
-deploy-test:
-  stage: deploy
-  image:
-    name: hashicorp/terraform:light
-    entrypoint:
-      - /usr/bin/env
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  script:
-    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
-    - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  artifacts:
-    reports:
-      dotenv: test.env
-  environment:
-    name: Testing/$CI_COMMIT_REF_SLUG
-    url: https://$CI_ENVIRONMENT_SLUG.example.com
-    on_stop: destroy-test
-    auto_stop_in: 1 week
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
-  resource_group: testing/$CI_COMMIT_REF_SLUG
-
-config-test:
-  stage: config
-  image: gableroux/ansible:latest
-  before_script:
-    - *default_before_script
-    - apk add jq
-    - pip install hcloud
-  script:
-    - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
-    - SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
-    - |
-      if [ -n "$SSH_HOST_LIST" ]; then
-        echo "Configure IPs: $SSH_HOST_LIST"
-        eval $(ssh-agent -s)
-        echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
-        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
-      fi
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  environment:
-    name: Testing/$CI_COMMIT_REF_SLUG
-  needs:
-    - deploy-test
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
-  resource_group: testing/$CI_COMMIT_REF_SLUG
-
-destroy-test:
+.destroy-env:
   stage: destroy
   image:
     name: hashicorp/terraform:light
@@ -279,63 +137,103 @@ destroy-test:
     key: $CI_COMMIT_REF_SLUG
     paths:
       - .terraform
+
+.env-prod:
+  environment:
+    name: Production
+    url: https://example.com
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+  resource_group: production
+
+.env-stag:
+  environment:
+    name: Staging
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE != "schedule"
+  resource_group: staging
+
+.env-test:
   environment:
     name: Testing/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+  resource_group: testing/$CI_COMMIT_REF_SLUG
+
+.env-dev:
+  before_script:
+    - *default_before_script
+    - apk add bash curl
+  environment:
+    name: Development/$CI_COMMIT_REF_SLUG
+    url: https://$CI_ENVIRONMENT_SLUG.example.com
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
+  resource_group: development/$CI_COMMIT_REF_SLUG
+
+deploy-prod:
+  extends: [.deploy-env, .env-prod]
+
+config-prod:
+  extends: [.config-env, .env-prod]
+  needs:
+    - deploy-prod
+
+deploy-stag:
+  extends: [.deploy-env, .env-stag]
+
+config-stag:
+  extends: [.config-env, .env-stag]
+  needs:
+    - deploy-stag
+
+deploy-test:
+  extends: [.deploy-env, .env-test]
+  environment:
+    on_stop: destroy-test
+    auto_stop_in: 1 week
+
+config-test:
+  extends: [.config-env, .env-test]
+  environment:
+    name: Testing/$CI_COMMIT_REF_SLUG
+  needs:
+    - deploy-test
+
+destroy-test:
+  extends: [.destroy-env, .env-test]
+  environment:
     action: stop
   needs:
     - deploy-test
   rules:
     - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       when: manual
-      allow_failure: true
 
 deploy-dev:
-  stage: deploy
-  image:
-    name: hashicorp/terraform:light
-    entrypoint:
-      - /usr/bin/env
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  before_script:
-    - *default_before_script
-    - apk add bash curl
+  extends: [.deploy-env, .env-dev]
   script:
-    - touch dev.env
-    - if scripts/dev-env; then echo "DEV_ENV=true" >>dev.env; fi
-    - . dev.env
     - |
-      if [ "${DEV_ENV:-skip}" != 'skip' ]; then
+      if scripts/dev-env; then
         echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  artifacts:
-    reports:
-      dotenv: dev.env
   environment:
-    name: Development/$CI_COMMIT_REF_SLUG
-    url: https://$CI_ENVIRONMENT_SLUG.example.com
     on_stop: destroy-dev
     auto_stop_in: 1 day
-  rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
-  resource_group: development/$CI_COMMIT_REF_SLUG
 
 config-dev:
-  stage: config
-  image: gableroux/ansible:latest
+  extends: [.config-env, .env-dev]
   before_script:
     - *default_before_script
-    - apk add jq
+    - apk add bash curl jq
     - pip install hcloud
   script:
-    - echo "DEV_ENV=$DEV_ENV"
     - |
-      if [ "${DEV_ENV:-skip}" != 'skip' ]; then
+      if scripts/dev-env; then
         echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
         SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
@@ -351,34 +249,17 @@ config-dev:
           ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
         fi
       fi
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
-  environment:
-    name: Development/$CI_COMMIT_REF_SLUG
   needs:
     - deploy-dev
-  rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
-  resource_group: development/$CI_COMMIT_REF_SLUG
 
 destroy-dev:
-  stage: destroy
-  image:
-    name: hashicorp/terraform:light
-    entrypoint:
-      - /usr/bin/env
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  variables:
-    GIT_STRATEGY: none
+  extends: [.destroy-env, .env-dev]
   before_script:
     - *default_before_script
-    - apk add git
+    - apk add bash curl git
   script:
-    - echo "DEV_ENV=$DEV_ENV"
     - |
-      if [ "${DEV_ENV:-skip}" != 'skip' ]; then
+      if scripts/dev-env; then
         echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         if [ ! -d .git ]; then
           git init -b main
@@ -389,12 +270,7 @@ destroy-dev:
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
-  cache:
-    key: $CI_COMMIT_REF_SLUG
-    paths:
-      - .terraform
   environment:
-    name: Development/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
     - deploy-dev
