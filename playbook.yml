@@ -4,3 +4,5 @@
     - env # Use `env` instead of `all` or `hcloud`, see README.md#caveats
   roles:
     - common
+    - firewall
+    - security
