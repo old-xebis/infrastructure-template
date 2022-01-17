@@ -1,0 +1,5 @@
+---
+- name: nft reload all firewall rules
+  become: true
+  ansible.builtin.command: /etc/nftables.conf
+  listen: nft rules changed

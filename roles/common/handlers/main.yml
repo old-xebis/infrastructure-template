@@ -5,3 +5,6 @@
     reboot_timeout: 600
     msg: Rebooting...
   listen: Reboot machine
+
+- name: Include firewall handlers
+  ansible.builtin.include_tasks: firewall.yml
