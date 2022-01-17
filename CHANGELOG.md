@@ -1,3 +1,10 @@
+# [0.13.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.12.1...v0.13.0) (2022-01-17)
+
+
+### Features
+
+* add nftables ([29bed15](https://gitlab.com/xebis/infrastructure-template/commit/29bed1571061716117dc5eb1fb2fecd9e200b39a))
+
 ## [0.12.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.12.0...v0.12.1) (2022-01-15)
 
 
