@@ -1,0 +1,29 @@
+---
+- name: Install firewall deb packages
+  become: true
+  ansible.builtin.apt:
+    name: nftables
+    state: present
+
+- name: Create nftables directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/nftables
+    mode: u=rwx,g=rx,o=rx
+    state: directory
+
+- name: Copy common firewall rules from template
+  become: true
+  ansible.builtin.copy:
+    src: nftables.conf
+    dest: /etc/nftables.conf
+    mode: u=rwx,g=r,o=r
+    validate: nft -c -f %s
+  notify: nft rules changed
+
+- name: Start and enable nftables
+  become: true
+  ansible.builtin.systemd:
+    name: nftables
+    enabled: true
+    state: started

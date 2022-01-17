@@ -102,7 +102,17 @@ Creates one machine for development and testing environments, or intentionally z
 
 - have updated packages
 - are rebooted when the update (or any earlier operation) requires a reboot
-- have fail2ban installed, set up, and running
+- have firewall built on `nftables`:
+  - **allows** any *localhost* traffic
+  - **allows** *incoming*, *forwarded*, and *outgoing* established and related connections
+  - **allows** *incoming* SSH connections, **rate limits** *incoming* ICMP and IGMP requests
+  - **allows** *forwarded* ICMP and IGMP requests
+  - **allows** *outgoing* DNS, NTP, HTTP, HTTPS, and SSH connections
+  - **extensible** by adding files in the directory `/etc/nftables/`:
+    - rules - `inet-in-*.conf`, `inet-fwd-*.conf`, or `inet-out-*.conf`
+    - chains - `inet-chain-*.conf`
+  - **rejects** not allowed traffic, **drops** invalid and faulty packets
+- have `fail2ban` installed, set up, and running
 
 ### Caveats
 
