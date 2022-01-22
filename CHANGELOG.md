@@ -1,3 +1,10 @@
+# [0.14.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.13.0...v0.14.0) (2022-01-22)
+
+
+### Features
+
+* tf tries to guess env tier from env slug when empty ([4e25d49](https://gitlab.com/xebis/infrastructure-template/commit/4e25d499fca6d20da1e9a8c1fba2b03260a6356e))
+
 # [0.13.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.12.1...v0.13.0) (2022-01-17)
 
 
