@@ -1,3 +1,10 @@
+# [0.15.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.14.0...v0.15.0) (2022-01-22)
+
+
+### Features
+
+* separate terraform doc to docs/tf.md ([8c938d1](https://gitlab.com/xebis/infrastructure-template/commit/8c938d12aa2686d75ce220cc3a7e0317bc572eab))
+
 # [0.14.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.13.0...v0.14.0) (2022-01-22)
 
 
