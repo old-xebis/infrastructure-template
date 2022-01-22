@@ -154,7 +154,6 @@ export TF_HTTP_PASSWORD="$GL_TOKEN" # Set password for Terraform HTTP backend
 export HCLOUD_TOKEN="<token>" # Your Hetzner API token
 export TF_VAR_ENV_NAME="<environment>" # Replace with the environment name
 export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
-export TF_VAR_ENV_TIER="<tier>" # Replace with the environment slug, permitted values are "production", "staging", "testing", "development", or "other" (default)
 ```
 
 - Setup repository by `scripts/setup`, install dependencies by `sudo scripts/bootstrap` script, update repository by `scripts/update` script.
@@ -242,7 +241,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | ENV\_SLUG | The environment slug, used to prefix resource names to allow co-existence of multiple environments in one Hetzner Cloud project | `string` | n/a | yes |
-| ENV\_TIER | The environment tier, used to determine amount of resources for each environment | `string` | `"other"` | no |
+| ENV\_TIER | The environment tier, used to determine amount of resources for each environment | `string` | `""` | no |
 
 #### Outputs
 
