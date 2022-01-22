@@ -1,10 +1,10 @@
 output "environment_slug" {
-  value       = var.ENV_SLUG
+  value       = local.env.slug
   description = "Environment slug (for debugging)"
 }
 
 output "environment_tier" {
-  value       = var.ENV_TIER
+  value       = local.env.tier
   description = "Environment tier (for debugging)"
 }
 

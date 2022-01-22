@@ -21,7 +21,7 @@ function load_variables() {
     # see README.md#set-up-local-usage
     export TF_VAR_ENV_NAME="Local"
     export TF_VAR_ENV_SLUG="loc"
-    # Uncomment TF_VAR_ENV_TIER only when working with states created by GitLab CI
+    # Uncomment TF_VAR_ENV_TIER only when overriding tier guessed by Terraform
     #export TF_VAR_ENV_TIER="other"
 
     info "Exported variables: TF_VAR_ENV_NAME='$TF_VAR_ENV_NAME', TF_VAR_ENV_SLUG='$TF_VAR_ENV_SLUG', TF_VAR_ENV_TIER='${TF_VAR_ENV_TIER:-}'" "$symbol_done" "$script_path"

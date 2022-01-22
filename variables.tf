@@ -15,7 +15,7 @@ variable "ENV_SLUG" {
 
 variable "ENV_TIER" {
   type        = string
-  default     = "other"
+  default     = ""
   description = "The environment tier, used to determine amount of resources for each environment"
 
   validation {
@@ -24,6 +24,9 @@ variable "ENV_TIER" {
   }
 }
 locals {
-  env   = var.ENV_SLUG
+  env = {
+    slug = var.ENV_SLUG
+    tier = var.ENV_TIER != "" ? var.ENV_TIER : substr(var.ENV_SLUG, 0, 10) == "production" ? "production" : substr(var.ENV_SLUG, 0, 7) == "staging" ? "staging" : substr(var.ENV_SLUG, 0, 7) == "testing" ? "testing" : substr(var.ENV_SLUG, 0, 11) == "development" ? "development" : "other"
+  }
   count = contains(["production", "staging"], var.ENV_TIER) ? 0 : 1
 }
