@@ -2,8 +2,7 @@
 formatter: markdown table
 
 output:
-  file: README.md
+  file: docs/tf.md
 
 settings:
   anchor: false
-  indent: 4
