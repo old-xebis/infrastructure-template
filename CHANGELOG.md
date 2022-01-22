@@ -1,3 +1,12 @@
+## [0.15.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.0...v0.15.1) (2022-01-22)
+
+
+### Bug Fixes
+
+* firewall service name to enable and start ([dd09804](https://gitlab.com/xebis/infrastructure-template/commit/dd098045fae13383c88b1e9c5e7fa1dbb804e54f))
+* nftables fails on shebang interpreted as one command ([c3fce87](https://gitlab.com/xebis/infrastructure-template/commit/c3fce876045c89db6f3f2d8e794d12523ca16ada))
+* tf var env_tier default value fails on validation ([8b15b7a](https://gitlab.com/xebis/infrastructure-template/commit/8b15b7a457dcf0c737ce19591717531ee7903b86))
+
 # [0.15.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.14.0...v0.15.0) (2022-01-22)
 
 
