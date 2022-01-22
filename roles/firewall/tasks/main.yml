@@ -24,6 +24,6 @@
 - name: Start and enable nftables
   become: true
   ansible.builtin.systemd:
-    name: nftables
+    name: nftables.service
     enabled: true
     state: started

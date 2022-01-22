@@ -19,7 +19,7 @@ variable "ENV_TIER" {
   description = "The environment tier, used to determine amount of resources for each environment"
 
   validation {
-    condition     = contains(["production", "staging", "testing", "development", "other"], var.ENV_TIER)
+    condition     = contains(["", "production", "staging", "testing", "development", "other"], var.ENV_TIER)
     error_message = "The ENV_TIER value must be one of \"production\", \"staging\", \"testing\", \"development\", or \"other\"."
   }
 }
