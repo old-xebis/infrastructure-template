@@ -1,3 +1,10 @@
+## [0.15.2](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.1...v0.15.2) (2022-01-29)
+
+
+### Bug Fixes
+
+* ansible lint complains about cache and tests dir content ([e4e4d2b](https://gitlab.com/xebis/infrastructure-template/commit/e4e4d2b5b7b1ae7a4341bc0ecd73ab0defe87bd9))
+
 ## [0.15.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.0...v0.15.1) (2022-01-22)
 
 
