@@ -30,7 +30,7 @@ lint:
     PRE_COMMIT_HOME: $CI_PROJECT_DIR/.cache/pre-commit
   before_script:
     - *default_before_script
-    - apk add bash curl git go grep libffi-dev npm py-pip python3-dev shellcheck shfmt terraform unzip
+    - apk --no-cache add bash curl git go grep libffi-dev npm py-pip python3-dev shellcheck shfmt terraform unzip
     - pip install checkov pre-commit
     - npm install -g markdownlint-cli
     - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
@@ -53,7 +53,7 @@ lint:
   stage: validate
   before_script:
     - *default_before_script
-    - apk add bats
+    - apk --no-cache add bats
   script:
     - scripts/test full
 
@@ -91,7 +91,7 @@ test-nightly:
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
-    - apk add jq
+    - apk --no-cache add jq
     - pip install hcloud
   script:
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
@@ -121,7 +121,7 @@ test-nightly:
     GIT_STRATEGY: none
   before_script:
     - *default_before_script
-    - apk add git
+    - apk --no-cache add git
   script:
     - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
     - |
@@ -165,7 +165,7 @@ test-nightly:
 .env-dev:
   before_script:
     - *default_before_script
-    - apk add bash curl
+    - apk --no-cache add bash curl
   environment:
     name: Development/$CI_COMMIT_REF_SLUG
     url: https://$CI_ENVIRONMENT_SLUG.example.com
@@ -229,7 +229,7 @@ config-dev:
   extends: [.config-env, .env-dev]
   before_script:
     - *default_before_script
-    - apk add bash curl jq
+    - apk --no-cache add bash curl jq
     - pip install hcloud
   script:
     - |
@@ -256,7 +256,7 @@ destroy-dev:
   extends: [.destroy-env, .env-dev]
   before_script:
     - *default_before_script
-    - apk add bash curl git
+    - apk --no-cache add bash curl git
   script:
     - |
       if [ ! -d .git ]; then
@@ -288,7 +288,7 @@ release:
     entrypoint: [""]
   before_script:
     - *default_before_script
-    - apk add git
+    - apk --no-cache add git
     - npm install -g semantic-release @semantic-release/gitlab @semantic-release/git @semantic-release/changelog
   script:
     - npx semantic-release
