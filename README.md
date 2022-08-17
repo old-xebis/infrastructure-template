@@ -12,9 +12,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/xebis/infrastructure-template)
 [![pipeline status](https://gitlab.com/xebis/infrastructure-template/badges/main/pipeline.svg?ignore_skipped=true)](https://gitlab.com/xebis/infrastructure-template/-/commits/main)
 
-Template for automated GitOps and IaC in a cloud.
-
-GitLab CI handles static and dynamic environments. Environments are created, updated, and destroyed by Terraform, then configured by cloud-init and Ansible.
+Template to automate GitOps and IaC in a cloud. GitLab CI manages static and dynamic environments, which are created, updated, and destroyed by Terraform, then set up by cloud-init and Ansible.
 
 **The project is under active development.** The project is a fork of [xebis/repository-template](https://github.com/xebis/repository-template).
 
@@ -310,7 +308,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - [Visual Studio Code](https://code.visualstudio.com/) with [Extensions for Visual Studio Code](https://marketplace.visualstudio.com/VSCode):
   - [HashiCorp Terraform](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
-  - [Ansible](https://marketplace.visualstudio.com/items?itemName=tomaciazek.ansible)
+  - [Ansible](https://marketplace.visualstudio.com/items?itemName=redhat.ansible)
 
 ### Further Reading
 

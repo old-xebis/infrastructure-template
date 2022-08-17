@@ -9,6 +9,6 @@ resource "hcloud_server" "test" {
   user_data   = file("${path.module}/cloud-config.yml")
 
   labels = {
-    "env" = "${local.env.slug}"
+    "env" = local.env.slug
   }
 }
