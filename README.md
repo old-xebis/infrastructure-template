@@ -308,7 +308,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - [Visual Studio Code](https://code.visualstudio.com/) with [Extensions for Visual Studio Code](https://marketplace.visualstudio.com/VSCode):
   - [HashiCorp Terraform](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
-  - [Ansible](https://marketplace.visualstudio.com/items?itemName=tomaciazek.ansible)
+  - [Ansible](https://marketplace.visualstudio.com/items?itemName=redhat.ansible)
 
 ### Further Reading
 
