@@ -19,8 +19,10 @@ function update_git_submodules() {
 
 # Update repository terraform
 function update_terraform() {
-    if [ -d '.terraform' ] && [ -n "${TF_HTTP_PASSWORD:-}" ]; then
+    if [ -d 'terraform/.terraform' ] && [ -n "${TF_HTTP_PASSWORD:-}" ]; then
+        pushd terraform
         terraform init -upgrade
+        popd
     else
         notice 'Terraform is not initialized or TF_HTTP_PASSWORD variable is empty, Terraform updade skipped'
     fi
