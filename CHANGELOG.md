@@ -1,3 +1,10 @@
+## [0.15.3](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.2...v0.15.3) (2022-08-22)
+
+
+### Bug Fixes
+
+* ci job config ansible hangs when starting nftables ([388d8bc](https://gitlab.com/xebis/infrastructure-template/commit/388d8bc2ad61730927b1007891bcfa0f6e0de4d5))
+
 ## [0.15.2](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.1...v0.15.2) (2022-01-29)
 
 
