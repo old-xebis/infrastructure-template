@@ -93,7 +93,7 @@ repos:
     rev: v0.16.0
     hooks:
       - id: terraform-docs-go
-        args: [.]
+        args: [./terraform]
   - repo: https://github.com/ansible-community/ansible-lint
     rev: v6.4.0
     hooks:

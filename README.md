@@ -177,6 +177,7 @@ Initialize local workspace if not yet initialized:
 
 ```shell
 # Init local workspace
+pushd terraform
 terraform init -reconfigure \
     -backend-config="address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG" \
     -backend-config="lock_address=https://gitlab.com/api/v4/projects/31099306/terraform/state/$TF_VAR_ENV_SLUG/lock" \
@@ -187,25 +188,27 @@ terraform init -reconfigure \
 - Get server IP address by `terraform output hcloud_server_test_ipv4_address`
 - Direct SSH by `ssh user@$(terraform output -raw hcloud_server_test_ipv4_address)`
 - Ansible:
+  - Change to Ansible configuration directory `pushd ../ansible`
   - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`
   - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
   - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
   - Ping: `ansible -u user -i hcloud.yml env -m ansible.builtin.ping`
   - Get all facts: `ansible -u user -i hcloud.yml env -m ansible.builtin.setup`
   - Configure with playbook: `ansible-playbook -u user -i hcloud.yml playbook.yml`
-- Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`
+  - Change back to Terraform configuration directory `popd`
+- Destroy environment by `terraform destroy` or `terraform destroy -auto-approve`, and go back to the repository root directory`popd`
 
 Uninitialize local workspace if you wish:
 
 ```shell
-rm -rf .terraform # Uninit local workspace, this step is required if you would like to work with another environment
+rm -rf terraform/.terraform # Uninit local workspace, this step is required if you would like to work with another environment
 ```
 
 Commit and push to run validations.
 
 ### Terraform Documentation
 
-See [Docs/Terraform: `docs/tf.md`](docs/tf.md)
+See [Terraform/Docs/Terraform: `terraform/docs/tf.md`](terraform/docs/tf.md)
 
 ## Contributing
 

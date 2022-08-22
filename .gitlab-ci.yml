@@ -79,12 +79,13 @@ test-nightly:
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   script:
     - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - cd terraform
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
-      - .terraform
+      - terraform/.terraform
 
 .config-env:
   stage: config
@@ -95,8 +96,8 @@ test-nightly:
     - pip install hcloud
   script:
     - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
-    - SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
+    - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" ansible/hcloud.yml
+    - SSH_HOST_LIST=$(ansible-inventory -i ansible/hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
     - |
       if [ -n "$SSH_HOST_LIST" ]; then
         echo "Configure IPs: $SSH_HOST_LIST"
@@ -106,8 +107,8 @@ test-nightly:
         chmod 700 ~/.ssh
         ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
         chmod 644 ~/.ssh/known_hosts
-        ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
-        ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
+        ansible -u gitlab-ci -i ansible/hcloud.yml env -m ansible.builtin.ping
+        ansible-playbook -u gitlab-ci -i ansible/hcloud.yml ansible/playbook.yml
       fi
 
 .destroy-env:
@@ -131,12 +132,13 @@ test-nightly:
         git fetch origin $CI_COMMIT_SHA --depth=1
         git reset --hard FETCH_HEAD
       fi
+    - cd terraform
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
-      - .terraform
+      - terraform/.terraform
 
 .env-prod:
   environment:
@@ -218,6 +220,7 @@ deploy-dev:
     - |
       if scripts/dev-env; then
         echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        cd terraform
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
@@ -235,8 +238,8 @@ config-dev:
     - |
       if scripts/dev-env; then
         echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
-        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" hcloud.yml
-        SSH_HOST_LIST=$(ansible-inventory -i hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
+        sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" ansible/hcloud.yml
+        SSH_HOST_LIST=$(ansible-inventory -i ansible/hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
         if [ -n "$SSH_HOST_LIST" ]; then
           echo "Configure IPs: $SSH_HOST_LIST"
           eval $(ssh-agent -s)
@@ -245,8 +248,8 @@ config-dev:
           chmod 700 ~/.ssh
           ssh-keyscan "$SSH_HOST_LIST" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          ansible -u gitlab-ci -i hcloud.yml env -m ansible.builtin.ping
-          ansible-playbook -u gitlab-ci -i hcloud.yml playbook.yml
+          ansible -u gitlab-ci -i ansible/hcloud.yml env -m ansible.builtin.ping
+          ansible-playbook -u gitlab-ci -i ansible/hcloud.yml ansible/playbook.yml
         fi
       fi
   needs:
@@ -269,6 +272,7 @@ destroy-dev:
       fi
       if scripts/dev-env; then
         echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        cd terraform
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
