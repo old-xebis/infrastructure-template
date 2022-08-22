@@ -21,9 +21,21 @@
     validate: nft -c -f %s
   notify: nft reload
 
-- name: Start and enable nftables
+- name: Start and enable nftables service
   become: true
   ansible.builtin.systemd:
     name: nftables
     enabled: true
     state: started
+  async: 60
+  poll: 0
+  register: nftables_service
+
+- name: Check on nftables service
+  become: true
+  ansible.builtin.async_status:
+    jid: "{{ nftables_service.ansible_job_id }}"
+  register: nftables_service_result
+  until: nftables_service_result.finished
+  retries: 4
+  delay: 15
