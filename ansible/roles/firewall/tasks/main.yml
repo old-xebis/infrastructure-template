@@ -19,11 +19,11 @@
     dest: /etc/nftables.conf
     mode: u=rwx,g=r,o=r
     validate: nft -c -f %s
-  notify: nft rules changed
+  notify: nft reload
 
 - name: Start and enable nftables
   become: true
   ansible.builtin.systemd:
-    name: nftables.service
+    name: nftables
     enabled: true
     state: started
