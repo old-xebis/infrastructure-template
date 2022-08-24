@@ -88,7 +88,7 @@ repos:
       - id: terraform_tflint
         args:
           - --args=--enable-rule=terraform_documented_variables
-      - id: checkov
+      - id: terraform_checkov
   - repo: https://github.com/terraform-docs/terraform-docs
     rev: v0.16.0
     hooks:
