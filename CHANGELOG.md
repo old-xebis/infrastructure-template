@@ -1,3 +1,10 @@
+## [0.15.4](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.3...v0.15.4) (2022-08-30)
+
+
+### Bug Fixes
+
+* role firewall fails in ansible check mode on asynchronous task ([7caa7d5](https://gitlab.com/xebis/infrastructure-template/commit/7caa7d5177faae951fd6fb8d2409580e9ee3aaf7))
+
 ## [0.15.3](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.2...v0.15.3) (2022-08-22)
 
 
