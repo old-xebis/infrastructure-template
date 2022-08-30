@@ -28,6 +28,7 @@
     enabled: true
     state: started
   async: 60
+  when: not ansible_check_mode
   poll: 0
   register: nftables_service
 
@@ -36,6 +37,7 @@
   ansible.builtin.async_status:
     jid: "{{ nftables_service.ansible_job_id }}"
   register: nftables_service_result
+  when: not ansible_check_mode
   until: nftables_service_result.finished
   retries: 4
   delay: 15
