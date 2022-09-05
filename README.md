@@ -149,7 +149,7 @@ export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 ```
 
 - Setup repository by `scripts/setup`, install dependencies by `sudo scripts/bootstrap` script, update repository by `scripts/update` script.
-- Replace with your public SSH key at [`cloud-config.yml`](cloud-config.yml) under section `users:name=mb` to the `ssh_authorized_keys` as the first element, and commit it
+- Set up all admins and users, including public SSH key at [`ansible/group_vars/all.yml`](ansible/group_vars/all.yml) under section `users`, see documentation there. Do not forget to commit it 😀
 
 ## Usage
 
@@ -295,6 +295,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Ansible](https://www.ansible.com/)
   - [GitHub - ansible-community/ansible-lint: Best practices checker for Ansible](https://github.com/ansible-community/ansible-lint)
   - [GitHub - ansible-collections/hetzner.hcloud: A collection containing modules to manage resources on the Hetzner Cloud.](https://github.com/ansible-collections/hetzner.hcloud)
+  - [Ansible Documentation: Ansible.Posix](https://docs.ansible.com/ansible/latest/collections/ansible/posix/index.html)
 - [cloud-init](https://cloud-init.io/)
 - [Docker Hub - hashicorp/terraform](https://hub.docker.com/r/hashicorp/terraform/)
 - [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)
