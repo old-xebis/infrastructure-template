@@ -34,6 +34,7 @@ lint:
     - pip install checkov pre-commit
     - npm install -g markdownlint-cli
     - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+    - ansible-galaxy collection install ansible.posix
   script:
     - |
       if [ -z "${GL_TOKEN:-}" ]; then
