@@ -1,3 +1,18 @@
+# [0.16.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.4...v0.16.0) (2022-09-05)
+
+
+### Bug Fixes
+
+* ansible role access fails on wrong expression ([9fe7fcb](https://gitlab.com/xebis/infrastructure-template/commit/9fe7fcb1df386304717a262aea579ff809b083b8))
+* ansible role access fails on wrong loop expression ([3013a3b](https://gitlab.com/xebis/infrastructure-template/commit/3013a3ba6a6f81786bac1e203b4340ddd3f0da39))
+* ansible role access fails on wrong user expression ([1abdd7b](https://gitlab.com/xebis/infrastructure-template/commit/1abdd7be2af2d68b2bc443589f1d662612c263ac))
+
+
+### Features
+
+* add role access configuring admins, users, and ssh keys ([313231c](https://gitlab.com/xebis/infrastructure-template/commit/313231cb9e7b2e860a8be38a560b37ce3d26f88d))
+* add script bootstrap ansible.posix installation ([372d755](https://gitlab.com/xebis/infrastructure-template/commit/372d75536c145e314328a566fa6511dca0ed8e47))
+
 ## [0.15.4](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.3...v0.15.4) (2022-08-30)
 
 
