@@ -149,7 +149,7 @@ export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 ```
 
 - Setup repository by `scripts/setup`, install dependencies by `sudo scripts/bootstrap` script, update repository by `scripts/update` script.
-- Replace with your public SSH key at [`cloud-config.yml`](cloud-config.yml) under section `users:name=mb` to the `ssh_authorized_keys` as the first element, and commit it
+- Set up all admins and users, including public SSH key at [`ansible/group_vars/all.yml`](ansible/group_vars/all.yml) under section `users`, see documentation there. Do not forget to commit it 😀
 
 ## Usage
 

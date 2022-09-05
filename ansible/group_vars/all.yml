@@ -1,0 +1,16 @@
+---
+# users:
+#  - username: alice
+#    admin: BOOL
+#    [ssh_keys_urls]: list of URLs pointing to public SSH key list, for example https://github.com/user.keys or https://gitlab.com/user.keys
+#    [ssh_keys]: list of public SSH keys
+users:
+  - username: mb
+    admin: true
+    ssh_keys_urls:
+      - https://gitlab.com/bruzina.keys
+      - https://github.com/bruzina.keys
+  - username: pc
+    admin: true
+    ssh_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD0Xq+D/4VA3gqQ5pc4BKo6MkbL3PDIvooFUUEvYieyp7gTSrPrXROKZ7HNXXOLOAXYcvofHpprjGBNh/jXACPaKeiar9SqS03j1ZWt3ETsjG+NA1PufRPx7wvEf6UtTtB7pa8hcvHU6kNuhK8LcsaDEUAuO+6rKY3dStsARLqVrz+WaBJ9myU1veVVRo0EsUaz8VgtdjqeaWqolpWVPVMv9OdD753y7M1IyqgpNHC+oO251LA1ADk2YyWkXHU4CIqQVQcQ5Svy9bl//zL2LfOa9uLny23eBe2Aevc0eNMCAbrPSDQkTkp0ciAS2C3RryqWUzMAB9/KRAfT8gbm+9BWjjj5B1pe/nWHwpwzfmOG09OGFa8hfQUltOouGsGVRyRhefk8GSG1XYiW+L+elEKnDvKc41QXI2Dk9L8zOHZd37kM60V6zRoIxr0XJSoAAOlQp86FXnsIU1lg+4tiVuaYerA2rWlDimZ2VeJgLxyfsmKxwgSWD1B7z0SgkV6zHM8=
