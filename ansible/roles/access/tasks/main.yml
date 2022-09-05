@@ -17,7 +17,7 @@
       - users
     shell: /bin/bash
     state: present
-  loop: users
+  loop: "{{ users }}"
   when: users.admin
 
 - name: Add users
@@ -27,8 +27,8 @@
     group: users
     shell: /bin/bash
     state: present
-  loop: users
-  when: users.admin
+  loop: "{{ users }}"
+  when: not users.admin
 
 - name: Add SSH authorized keys lists
   become: true
