@@ -11,7 +11,7 @@
 - name: Add admins
   become: true
   ansible.builtin.user:
-    name: item.username
+    name: "{{ item.username }}"
     group: admin
     groups:
       - users
@@ -23,7 +23,7 @@
 - name: Add users
   become: true
   ansible.builtin.user:
-    name: item.username
+    name: "{{ item.username }}"
     group: users
     shell: /bin/bash
     state: present
