@@ -1,3 +1,10 @@
+# [0.17.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.16.0...v0.17.0) (2022-09-06)
+
+
+### Features
+
+* disable root login via ssh ([8548b70](https://gitlab.com/xebis/infrastructure-template/commit/8548b70c92222b882237b2cbff1e14350d2b985c))
+
 # [0.16.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.15.4...v0.16.0) (2022-09-05)
 
 
