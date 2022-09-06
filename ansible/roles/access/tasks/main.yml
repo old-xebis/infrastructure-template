@@ -45,3 +45,12 @@
     key: "{{ item.1 }}"
     state: present
   loop: "{{ users | subelements('ssh_keys', skip_missing=true) }}"
+
+- name: Disable root Login
+  become: true
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?PermitRootLogin
+    line: PermitRootLogin no
+    state: present
+  notify: SSH restart
