@@ -5,6 +5,7 @@
 
 | Name | Version |
 |------|---------|
+| terraform | >= 1.2.0 |
 | hcloud | 1.32.0 |
 
 ## Providers

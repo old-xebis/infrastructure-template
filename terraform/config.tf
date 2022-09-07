@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.2.0"
+
   backend "http" {
     # address, lock_address, unlock_address = CLI arguments, see README.md section Usage
     username = "gitlab-ci-token"
