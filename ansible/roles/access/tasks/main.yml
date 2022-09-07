@@ -46,11 +46,25 @@
     state: present
   loop: "{{ users | subelements('ssh_keys', skip_missing=true) }}"
 
-- name: Disable root Login
+- name: Disable root SSH login
   become: true
   ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: ^#?PermitRootLogin
     line: PermitRootLogin no
     state: present
+  notify: SSH restart
+
+- name: Disable empty password SSH login
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^#?PermitEmptyPasswords
+    line: PermitEmptyPasswords no
+  notify: SSH restart
+
+- name: Disable password SSH login
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^(#\s*)?PasswordAuthentication
+    line: PasswordAuthentication no
   notify: SSH restart
