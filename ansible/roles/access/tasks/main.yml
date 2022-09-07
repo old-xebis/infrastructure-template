@@ -56,6 +56,7 @@
   notify: SSH restart
 
 - name: Disable empty password SSH login
+  become: true
   ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: ^#?PermitEmptyPasswords
@@ -63,6 +64,7 @@
   notify: SSH restart
 
 - name: Disable password SSH login
+  become: true
   ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: ^(#\s*)?PasswordAuthentication
