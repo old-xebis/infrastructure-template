@@ -1,3 +1,10 @@
+# [0.18.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.17.0...v0.18.0) (2022-09-07)
+
+
+### Features
+
+* harden ssh security - disable all and empty passwords login ([7194d61](https://gitlab.com/xebis/infrastructure-template/commit/7194d6133ea1ac056bd811984db0c6ac28cf8ca0))
+
 # [0.17.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.16.0...v0.17.0) (2022-09-06)
 
 
