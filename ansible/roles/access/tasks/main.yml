@@ -63,7 +63,7 @@
     regexp: ^#?PermitRootLogin
     line: PermitRootLogin no
     state: present
-  notify: SSH restart
+  notify: Restart sshd
 
 - name: Disable empty password SSH login
   become: true
@@ -71,7 +71,7 @@
     dest: /etc/ssh/sshd_config
     regexp: ^#?PermitEmptyPasswords
     line: PermitEmptyPasswords no
-  notify: SSH restart
+  notify: Restart sshd
 
 - name: Disable password SSH login
   become: true
@@ -79,4 +79,4 @@
     dest: /etc/ssh/sshd_config
     regexp: ^(#\s*)?PasswordAuthentication
     line: PasswordAuthentication no
-  notify: SSH restart
+  notify: Restart sshd
