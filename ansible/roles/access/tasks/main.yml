@@ -1,10 +1,17 @@
 ---
-- name: Add admin group as passwordless sudoer
+- name: Add user groups
+  become: true
+  ansible.builtin.group:
+    name: "{{ item.username }}"
+    state: present
+  loop: "{{ users }}"
+
+- name: Add sudo group as passwordless sudoer
   become: true
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
-    regexp: ^%admin
-    line: "%admin ALL=(ALL) NOPASSWD: ALL"
+    regexp: ^%sudo
+    line: "%sudo ALL=(ALL) NOPASSWD: ALL"
     state: present
     validate: visudo -cf %s
 
@@ -12,8 +19,9 @@
   become: true
   ansible.builtin.user:
     name: "{{ item.username }}"
-    group: admin
+    group: "{{ item.username }}"
     groups:
+      - sudo
       - users
     shell: /bin/bash
     state: present
@@ -24,7 +32,9 @@
   become: true
   ansible.builtin.user:
     name: "{{ item.username }}"
-    group: users
+    group: "{{ item.username }}"
+    groups:
+      - users
     shell: /bin/bash
     state: present
   loop: "{{ users }}"
