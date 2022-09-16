@@ -1,3 +1,10 @@
+## [0.18.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.18.0...v0.18.1) (2022-09-16)
+
+
+### Bug Fixes
+
+* each user should have own group, fix admin to sudo ([849c71f](https://gitlab.com/xebis/infrastructure-template/commit/849c71fcacd58d2e5a3d093e1517f1fe6b9d92d0))
+
 # [0.18.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.17.0...v0.18.0) (2022-09-07)
 
 
