@@ -19,7 +19,7 @@
     dest: /etc/nftables.conf
     mode: u=rwx,g=r,o=r
     validate: nft -c -f %s
-  notify: nft reload
+  notify: Reload nftables
 
 - name: Start and enable nftables service
   become: true
