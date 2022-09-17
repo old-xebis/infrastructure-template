@@ -94,6 +94,7 @@ Creates one machine for development and testing environments, or intentionally z
 
 - have updated packages
 - are rebooted when the update (or any earlier operation) requires a reboot
+- have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
 - have firewall built on `nftables`:
   - **allows** any *localhost* traffic
   - **allows** *incoming*, *forwarded*, and *outgoing* established and related connections
