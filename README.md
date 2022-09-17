@@ -104,6 +104,7 @@ Creates one machine for development and testing environments, or intentionally z
     - rules - `inet-in-*.conf`, `inet-fwd-*.conf`, or `inet-out-*.conf`
     - chains - `inet-chain-*.conf`
   - **rejects** not allowed traffic, **drops** invalid and faulty packets
+    - **logs** packets rejected by the rules when `nftables_log_rejected` is defined and `true`
 - have `fail2ban` installed, set up, and running
 
 ### Caveats
