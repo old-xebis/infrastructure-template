@@ -1,4 +1,4 @@
-#!/usr/bin/env -S nft -f
+#!/usr/sbin/nft -f
 
 flush ruleset
 
@@ -19,8 +19,8 @@ table inet filter {
         ip protocol igmp counter limit rate 10/second accept
         ip6 nexthdr icmpv6 counter limit rate 10/second accept
         tcp dport 22 counter accept # Allow SSH traffic
-        include "/etc/nftables/inet-in-*.conf" # Include role specific rules
-        counter reject with icmpx type port-unreachable # Reject
+        include "/etc/nftables/inet-in-*.conf" # Include roles rules
+        counter {% if nftables_log_rejected is defined and nftables_log_rejected %}log prefix "nftables rejected IN " {% endif %}reject with icmpx type port-unreachable # Reject
     }
 
     chain inet-fwd {
@@ -29,8 +29,8 @@ table inet filter {
         ip protocol icmp counter accept # Allow all ICMP and IGMP traffic, but do NOT enforce a rate limit
         ip protocol igmp counter accept
         ip6 nexthdr icmpv6 counter accept
-        include "/etc/nftables/inet-fwd-*.conf" # Include role specific rules
-        counter reject with icmpx type host-unreachable # Reject
+        include "/etc/nftables/inet-fwd-*.conf" # Include roles rules
+        counter {% if nftables_log_rejected is defined and nftables_log_rejected %}log prefix "nftables rejected FWD " {% endif %}reject with icmpx type host-unreachable # Reject
     }
 
     chain inet-out {
@@ -46,8 +46,8 @@ table inet filter {
         tcp dport 80 counter accept # Allow HTTP traffic
         tcp dport 443 counter accept # Allow HTTPS traffic
         tcp dport 22 counter accept # Allow SSH traffic
-        include "/etc/nftables/inet-out-*.conf" # Include role specific rules
-        counter reject with icmpx type admin-prohibited # Reject
+        include "/etc/nftables/inet-out-*.conf" # Include roles rules
+        counter {% if nftables_log_rejected is defined and nftables_log_rejected %}log prefix "nftables rejected OUT " {% endif %}reject with icmpx type admin-prohibited # Reject
     }
 
     chain inet-post {

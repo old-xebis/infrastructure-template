@@ -2,3 +2,5 @@
 exclude_paths:
   - .cache/
   - tests/
+skip_list:
+  - meta-no-info

@@ -94,6 +94,7 @@ Creates one machine for development and testing environments, or intentionally z
 
 - have updated packages
 - are rebooted when the update (or any earlier operation) requires a reboot
+- have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
 - have firewall built on `nftables`:
   - **allows** any *localhost* traffic
   - **allows** *incoming*, *forwarded*, and *outgoing* established and related connections
@@ -104,6 +105,7 @@ Creates one machine for development and testing environments, or intentionally z
     - rules - `inet-in-*.conf`, `inet-fwd-*.conf`, or `inet-out-*.conf`
     - chains - `inet-chain-*.conf`
   - **rejects** not allowed traffic, **drops** invalid and faulty packets
+    - **logs** packets rejected by the rules when `nftables_log_rejected` is defined and `true`
 - have `fail2ban` installed, set up, and running
 
 ### Caveats

@@ -19,3 +19,24 @@
 
 - name: Enforce reboot now rather than at the end of the playbook
   ansible.builtin.meta: flush_handlers
+
+- name: Install common deb packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - curl
+    state: present
+
+- name: Install management tools deb packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - mc
+    state: present
+
+- name: Install monitoring tools deb packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - htop
+    state: present
