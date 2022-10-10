@@ -1,3 +1,16 @@
+# [0.19.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.18.1...v0.19.0) (2022-10-10)
+
+
+### Bug Fixes
+
+* add missing dependencies between ansible roles ([869253b](https://gitlab.com/xebis/infrastructure-template/commit/869253b03827ea58dd788bc0752ef13538bc7ce2))
+
+
+### Features
+
+* add common deb packages installation ([e6c2042](https://gitlab.com/xebis/infrastructure-template/commit/e6c2042efd49288e0ea3485e974499fb609e177e))
+* add host/group/etc. config to log rejected packets by fw rules ([34c2591](https://gitlab.com/xebis/infrastructure-template/commit/34c25919c06cc0a910dde91587031ac341c7f8f0))
+
 ## [0.18.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.18.0...v0.18.1) (2022-09-16)
 
 
