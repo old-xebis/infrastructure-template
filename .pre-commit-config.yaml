@@ -36,12 +36,15 @@ repos:
       - id: script-must-have-extension
         exclude: .*\.bats$
       - id: script-must-not-have-extension
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.32.1
+    rev: v0.32.2
     hooks:
       - id: markdownlint
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.27.1
+    rev: v1.28.0
     hooks:
       - id: yamllint
         args: [--strict]
@@ -62,7 +65,6 @@ repos:
         entry: shfmt -i 4
         language: system
         types: [shell]
-        exclude: .*\.bats$
       - id: shfmt-bats
         name: shfmt-bats
         entry: shfmt -ln bats -i 4
@@ -74,11 +76,11 @@ repos:
         language: system
         types: [shell]
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.11.0
+    rev: v8.13.0
     hooks:
       - id: gitleaks
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.74.1
+    rev: v1.76.0
     hooks:
       - id: terraform_fmt
         args:
@@ -95,7 +97,7 @@ repos:
       - id: terraform-docs-go
         args: [./terraform]
   - repo: https://github.com/ansible-community/ansible-lint
-    rev: v6.4.0
+    rev: v6.8.0
     hooks:
       - id: ansible-lint
         args: [-c, .ansible-lint.yml]
