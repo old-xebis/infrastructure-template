@@ -2,7 +2,7 @@
 default_stages: [commit, manual, merge-commit, push]
 repos:
   - repo: https://github.com/jorisroovers/gitlint
-    rev: v0.17.0
+    rev: v0.18.0
     hooks:
       - id: gitlint
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -76,7 +76,7 @@ repos:
         language: system
         types: [shell]
   - repo: https://github.com/zricethezav/gitleaks
-    rev: v8.13.0
+    rev: v8.15.0
     hooks:
       - id: gitleaks
   - repo: https://github.com/antonbabenko/pre-commit-terraform
@@ -97,7 +97,7 @@ repos:
       - id: terraform-docs-go
         args: [./terraform]
   - repo: https://github.com/ansible-community/ansible-lint
-    rev: v6.8.0
+    rev: v6.8.6
     hooks:
       - id: ansible-lint
         args: [-c, .ansible-lint.yml]
