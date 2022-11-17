@@ -39,5 +39,5 @@
   register: nftables_service_result
   when: not ansible_check_mode
   until: nftables_service_result.finished
-  retries: 4
-  delay: 15
+  retries: 12
+  delay: 5
