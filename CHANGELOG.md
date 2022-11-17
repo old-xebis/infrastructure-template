@@ -1,3 +1,10 @@
+## [0.19.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.19.0...v0.19.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* speed up nftables service check ([b961571](https://gitlab.com/xebis/infrastructure-template/commit/b961571c5ce5148e4b4f351b58b2f51703753de1))
+
 # [0.19.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.18.1...v0.19.0) (2022-10-10)
 
 
