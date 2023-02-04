@@ -1,4 +1,4 @@
 [codespell]
-skip = CHANGELOG.md,images/*
+skip = CHANGELOG.md,images/*,**/nftables.conf.j2
 count =
 quiet-level = 3
