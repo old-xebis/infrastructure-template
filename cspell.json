@@ -1,0 +1,19 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "words": [
+        "drawio",
+        "gableroux",
+        "gitleaks",
+        "gitlint",
+        "hcloud",
+        "markdownlint",
+        "posix",
+        "roadmap",
+        "shellcheck",
+        "shfmt",
+        "shellib",
+        "tflint"
+    ],
+    "flagWords": []
+}

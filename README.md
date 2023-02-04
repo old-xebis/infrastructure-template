@@ -1,6 +1,8 @@
 <!-- omit in toc -->
 # Infrastructure Template
 
+<!-- cSpell:ignore Hetzner, nftables, IGMP, inet, gitflow, pushd, popd, uninitialize, uninit, jumanjihouse, shellcheckrc, antonbabenko, pluggable, shuaibiyy, hetznercloud -->
+
 ![GitHub top language](https://img.shields.io/github/languages/top/xebis/infrastructure-template)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
