@@ -68,7 +68,7 @@ Environments are managed in stages:
 - **Config**: environment is configured by cloud-init and Ansible over SSH
 - **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
-![Deploy in more detail](images/deploy.png)
+![Deploy and destroy in more detail](images/deploy-and-destroy.png)
 
 Automatically managed environments:
 
