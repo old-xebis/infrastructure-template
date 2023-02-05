@@ -1,6 +1,8 @@
 <!-- omit in toc -->
 # Infrastructure Template
 
+<!-- cSpell:ignore Hetzner, IGMP, inet, gitflow, pushd, popd, uninitialize, uninit, jumanjihouse, shellcheckrc, antonbabenko, pluggable, shuaibiyy, hetznercloud -->
+
 ![GitHub top language](https://img.shields.io/github/languages/top/xebis/infrastructure-template)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
@@ -66,7 +68,7 @@ Environments are managed in stages:
 - **Config**: environment is configured by cloud-init and Ansible over SSH
 - **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
-![Deploy in more detail](images/deploy.png)
+![Deploy and destroy in more detail](images/deploy-and-destroy.png)
 
 Automatically managed environments:
 

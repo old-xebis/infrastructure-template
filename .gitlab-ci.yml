@@ -1,10 +1,5 @@
 ---
-workflow:
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE =~ /^chore\(release\)/
-      when: never
-    - when: always
-
+# cSpell:ignore interruptible, hostvars, keyscan
 stages:
   - validate
   - deploy
