@@ -1,21 +1,23 @@
 {
-    "version": "0.2",
-    "language": "en",
-    "words": [
-        "codespell",
-        "drawio",
-        "gableroux",
-        "gitleaks",
-        "gitlint",
-        "hcloud",
-        "markdownlint",
-        "nftables",
-        "posix",
-        "roadmap",
-        "shellcheck",
-        "shfmt",
-        "shellib",
-        "tflint"
-    ],
-    "flagWords": []
+  "flagWords": [],
+  "language": "en",
+  "version": "0.2",
+  "words": [
+    "Bružina",
+    "codespell",
+    "drawio",
+    "gableroux",
+    "gitleaks",
+    "gitlint",
+    "hcloud",
+    "markdownlint",
+    "nftables",
+    "posix",
+    "roadmap",
+    "shellcheck",
+    "shfmt",
+    "shellib",
+    "tflint",
+    "Xebis"
+  ]
 }
