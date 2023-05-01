@@ -6,13 +6,13 @@ LANG=C
 # shellcheck source=./shellib/shellib.sh
 . "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/shellib/shellib.sh"
 
-# Check if dev env should be created by CI pipeline source
+# Check if dev env should be deployed by CI pipeline source
 function is_dev_env_pipeline_source() {
     local ci_pipeline_sources=('api' 'chat' 'trigger' 'web' 'webide')
     [[ ${ci_pipeline_sources[*]} =~ $CI_PIPELINE_SOURCE ]]
 }
 
-# Check if dev env should be created by CI pipeline source and ENV_SKIP or CREATE_ENV variable
+# Check if dev env should be deployed by CI pipeline source and ENV_SKIP or CREATE_ENV variable
 function is_dev_env_create_var() {
     local ci_pipeline_sources=('push' 'schedule')
     [[ ${ci_pipeline_sources[*]} =~ $CI_PIPELINE_SOURCE ]] &&
@@ -25,8 +25,8 @@ function is_dev_env_skip() {
         [[ ${CI_COMMIT_MESSAGE,,} =~ \[(skip\ env|env\ skip)\] ]]
 }
 
-# Check if dev env should be created or skipped
-function dev_env() {
+# Check if dev env should be deployed or not
+function deploy_dev_env() {
     local result=1
     local gl_tf_be_status_code
 
@@ -51,7 +51,16 @@ function dev_env() {
     return $result
 }
 
+# Check if env should be deployed or not
+function deploy_env() {
+    if [ "$CI_ENVIRONMENT_TIER" == "development" ]; then
+        deploy_dev_env
+    else
+        true
+    fi
+}
+
 # Skip execution under test
 if [ "${BASH_SOURCE[0]}" == "${0}" ]; then
-    dev_env
+    deploy_env
 fi

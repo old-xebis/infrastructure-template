@@ -4,5 +4,6 @@
 reduced.set
 
 bootstrap.bats
+deploy-env.bats
 setup.bats
 update.bats

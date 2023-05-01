@@ -227,7 +227,7 @@ deploy-dev:
   extends: [.deploy-env, .env-dev]
   script:
     - |
-      if scripts/dev-env; then
+      if scripts/deploy-env; then
         echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         cd terraform
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
@@ -246,7 +246,7 @@ config-dev:
     - pip install hcloud
   script:
     - |
-      if scripts/dev-env; then
+      if scripts/deploy-env; then
         echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" ansible/hcloud.yml
         SSH_HOST_LIST=$(ansible-inventory -i ansible/hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
@@ -280,7 +280,7 @@ destroy-dev:
         git submodule init
         git submodule update
       fi
-      if scripts/dev-env; then
+      if scripts/deploy-env; then
         echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
         cd terraform
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"

@@ -225,7 +225,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - `scripts/*` scripts - covered by unit tests `tests/*`
   - [ ] [`scripts/bootstrap`](scripts/bootstrap)
-  - [ ] [`scripts/dev-env`](scripts/dev-env)
+  - [ ] [`scripts/deploy-env`](scripts/deploy-env)
   - [ ] [`scripts/pre-commit`](scripts/pre-commit)
   - [ ] [`scripts/pre-push`](scripts/pre-push)
   - [ ] [`scripts/secrets.sh`](scripts/secrets.sh)
