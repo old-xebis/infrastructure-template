@@ -29,12 +29,6 @@ setup() {
     }
     export -f pkgs
 
-    function ansible-galaxy() {
-        echo 'OK'
-    }
-    export -f ansible-galaxy
-
     run install_dependencies
-    assert_line -n 0 'OK'
-    assert_line -n 1 'OK'
+    assert_output 'OK'
 }
