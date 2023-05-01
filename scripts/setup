@@ -50,6 +50,9 @@ function setup() {
 
     popd 1>/dev/null
 
+    # Install Ansible Galaxy ansible.posix collection
+    ansible-galaxy collection install ansible.posix
+
     # Check if GL_TOKEN is set
     if [ -z "${GL_TOKEN:-}" ]; then
         notice 'environment variable GL_TOKEN is not set, pre-commit hook gitlab-ci-linter will be skipped'

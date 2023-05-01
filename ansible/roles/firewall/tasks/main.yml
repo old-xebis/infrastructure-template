@@ -27,10 +27,10 @@
     name: nftables
     enabled: true
     state: started
-  async: 60
-  when: not ansible_check_mode
-  poll: 0
   register: nftables_service
+  when: not ansible_check_mode
+  async: 60
+  poll: 0
 
 - name: Check on nftables service
   become: true

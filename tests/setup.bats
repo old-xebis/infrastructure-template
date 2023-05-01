@@ -115,6 +115,12 @@ setup() {
     function setup_hook() {
         return 0
     }
+    export -f setup_hook
+
+    function ansible-galaxy() {
+        echo "$@"
+    }
+    export -f ansible-galaxy
 
     unset GL_TOKEN
 
@@ -122,8 +128,9 @@ setup() {
 
     assert_success
     assert_line -n 0 'scripts/setup ✓ commit-msg hook is installed'
-    assert_line -n 1 'scripts/setup 🛈 environment variable GL_TOKEN is not set, pre-commit hook gitlab-ci-linter will be skipped'
-    assert_line -n 2 'scripts/setup 💡 You might set up environment variable GL_TOKEN at scripts/secrets.sh and source it'
+    assert_line -n 1 'collection install ansible.posix'
+    assert_line -n 2 'scripts/setup 🛈 environment variable GL_TOKEN is not set, pre-commit hook gitlab-ci-linter will be skipped'
+    assert_line -n 3 'scripts/setup 💡 You might set up environment variable GL_TOKEN at scripts/secrets.sh and source it'
 }
 
 @test 'scripts/setup setup with GL_TOKEN set success test' {
@@ -140,6 +147,12 @@ setup() {
     function setup_hook() {
         return 0
     }
+    export -f setup_hook
+
+    function ansible-galaxy() {
+        echo "$@"
+    }
+    export -f ansible-galaxy
 
     export GL_TOKEN='******'
 
@@ -147,7 +160,8 @@ setup() {
 
     assert_success
     assert_line -n 0 'scripts/setup ✓ commit-msg hook is installed'
-    assert_line -n 1 'scripts/setup ✓ GL_TOKEN is set'
+    assert_line -n 1 'collection install ansible.posix'
+    assert_line -n 2 'scripts/setup ✓ GL_TOKEN is set'
 }
 
 @test 'scripts/setup main under root user test' {

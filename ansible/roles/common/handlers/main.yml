@@ -4,4 +4,3 @@
   ansible.builtin.reboot:
     reboot_timeout: 600
     msg: Rebooting...
-  listen: Reboot machine

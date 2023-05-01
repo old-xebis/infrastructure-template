@@ -13,8 +13,7 @@ function install_dependencies() {
         'pip:yamllint' 'snap:shfmt' 'snap:shellcheck' 'apt:bats' \
         'apt:terraform' \
         'curl2bash:tflint=https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh' \
-        'pip:checkov' 'snap:golang' 'apt:ansible' 'pip:ansible-lint'
-    ansible-galaxy collection install ansible.posix
+        'pip:checkov' 'snap:go' 'apt:ansible' 'pip:ansible-lint' 'pip:hcloud'
 }
 
 # Skip execution under test
