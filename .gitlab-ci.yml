@@ -1,5 +1,5 @@
 ---
-# cSpell:ignore interruptible, hostvars, keyscan
+# cSpell:ignore urllib unprotect interruptible hostvars keyscan
 stages:
   - validate
   - deploy
@@ -22,6 +22,7 @@ variables:
 lint:
   stage: validate
   variables:
+    PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
     PRE_COMMIT_HOME: $CI_PROJECT_DIR/.cache/pre-commit
   before_script:
     - *default_before_script
@@ -35,12 +36,22 @@ lint:
       if [ -z "${GL_TOKEN:-}" ]; then
           SKIP=gitlab-ci-linter pre-commit run -a --hook-stage manual
       else
-          GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run -a --hook-stage manual
+          # Temporary skip gitlab-ci-linter pre-commit hook until `urllib.error.HTTPError: HTTP Error 410: Gone` is fixed
+          SKIP=gitlab-ci-linter GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run -a --hook-stage manual
       fi
   cache:
-    paths:
-      - $PRE_COMMIT_HOME
-    when: always
+    - key: default
+      paths:
+        - $PIP_CACHE_DIR
+      unprotect: true
+      when: always
+    - key:
+        files:
+          - .pre-commit-config.yaml
+      paths:
+        - $PRE_COMMIT_HOME
+      unprotect: true
+      when: always
   interruptible: true
   rules:
     - when: always
@@ -49,9 +60,9 @@ lint:
   stage: validate
   before_script:
     - *default_before_script
-    - apk --no-cache add bats
+    - apk --no-cache add bats git
   script:
-    - scripts/test full
+    - scripts/test tests/full.set
 
 test-full:
   extends: .test
@@ -62,7 +73,7 @@ test-full:
 test-nightly:
   extends: .test
   script:
-    - scripts/test nightly
+    - scripts/test tests/nightly.set
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
@@ -190,6 +201,7 @@ config-stag:
 deploy-test:
   extends: [.deploy-env, .env-test]
   environment:
+    name: Testing/$CI_COMMIT_REF_SLUG
     on_stop: destroy-test
     auto_stop_in: 1 week
 
@@ -203,6 +215,7 @@ config-test:
 destroy-test:
   extends: [.destroy-env, .env-test]
   environment:
+    name: Testing/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
     - deploy-test
@@ -221,6 +234,7 @@ deploy-dev:
         terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
   environment:
+    name: Development/$CI_COMMIT_REF_SLUG
     on_stop: destroy-dev
     auto_stop_in: 1 day
 
@@ -273,6 +287,7 @@ destroy-dev:
         terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
       fi
   environment:
+    name: Development/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
     - deploy-dev
