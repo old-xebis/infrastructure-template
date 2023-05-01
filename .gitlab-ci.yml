@@ -2,8 +2,8 @@
 # cSpell:ignore urllib unprotect interruptible hostvars keyscan
 stages:
   - validate
-  - deploy
-  - config
+  - provision
+  - install
   - destroy
   - release
 
@@ -77,15 +77,15 @@ test-nightly:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
-.deploy-env:
-  stage: deploy
+.provision-env:
+  stage: provision
   image:
     name: hashicorp/terraform:light
     entrypoint:
       - /usr/bin/env
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
   script:
-    - echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - echo "Provision **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
     - cd terraform
     - terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
     - terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
@@ -94,20 +94,20 @@ test-nightly:
     paths:
       - terraform/.terraform
 
-.config-env:
-  stage: config
+.install-env:
+  stage: install
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
     - apk --no-cache add jq
     - pip install hcloud
   script:
-    - echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - echo "Install **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
     - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" ansible/hcloud.yml
     - SSH_HOST_LIST=$(ansible-inventory -i ansible/hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
     - |
       if [ -n "$SSH_HOST_LIST" ]; then
-        echo "Configure IPs: $SSH_HOST_LIST"
+        echo "Install IPs: $SSH_HOST_LIST"
         eval $(ssh-agent -s)
         echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
         mkdir -p ~/.ssh
@@ -131,7 +131,7 @@ test-nightly:
     - *default_before_script
     - apk --no-cache add git
   script:
-    - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+    - echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
     - |
       if [ ! -d .git ]; then
         git init -b main
@@ -155,7 +155,7 @@ test-nightly:
     - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
   resource_group: production
 
-.env-stag:
+.env-stg:
   environment:
     name: Staging
     url: https://$CI_ENVIRONMENT_SLUG.example.com
@@ -182,35 +182,35 @@ test-nightly:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
   resource_group: development/$CI_COMMIT_REF_SLUG
 
-deploy-prod:
-  extends: [.deploy-env, .env-prod]
+provision-prod:
+  extends: [.provision-env, .env-prod]
 
-config-prod:
-  extends: [.config-env, .env-prod]
+install-prod:
+  extends: [.install-env, .env-prod]
   needs:
-    - deploy-prod
+    - provision-prod
 
-deploy-stag:
-  extends: [.deploy-env, .env-stag]
+provision-stg:
+  extends: [.provision-env, .env-stg]
 
-config-stag:
-  extends: [.config-env, .env-stag]
+install-stg:
+  extends: [.install-env, .env-stg]
   needs:
-    - deploy-stag
+    - provision-stg
 
-deploy-test:
-  extends: [.deploy-env, .env-test]
+provision-test:
+  extends: [.provision-env, .env-test]
   environment:
     name: Testing/$CI_COMMIT_REF_SLUG
     on_stop: destroy-test
     auto_stop_in: 1 week
 
-config-test:
-  extends: [.config-env, .env-test]
+install-test:
+  extends: [.install-env, .env-test]
   environment:
     name: Testing/$CI_COMMIT_REF_SLUG
   needs:
-    - deploy-test
+    - provision-test
 
 destroy-test:
   extends: [.destroy-env, .env-test]
@@ -218,17 +218,17 @@ destroy-test:
     name: Testing/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
-    - deploy-test
+    - provision-test
   rules:
     - if: $CI_COMMIT_TAG =~ /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       when: manual
 
-deploy-dev:
-  extends: [.deploy-env, .env-dev]
+provision-dev:
+  extends: [.provision-env, .env-dev]
   script:
     - |
       if scripts/deploy-env; then
-        echo "Deploy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        echo "Provision **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
         cd terraform
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform apply -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
@@ -238,8 +238,8 @@ deploy-dev:
     on_stop: destroy-dev
     auto_stop_in: 1 day
 
-config-dev:
-  extends: [.config-env, .env-dev]
+install-dev:
+  extends: [.install-env, .env-dev]
   before_script:
     - *default_before_script
     - apk --no-cache add bash curl jq
@@ -247,11 +247,11 @@ config-dev:
   script:
     - |
       if scripts/deploy-env; then
-        echo "Configure **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        echo "Install **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
         sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" ansible/hcloud.yml
         SSH_HOST_LIST=$(ansible-inventory -i ansible/hcloud.yml --list | jq -r '._meta.hostvars | with_entries(.value |= .ipv4) | join(",")')
         if [ -n "$SSH_HOST_LIST" ]; then
-          echo "Configure IPs: $SSH_HOST_LIST"
+          echo "Install IPs: $SSH_HOST_LIST"
           eval $(ssh-agent -s)
           echo "$GL_CI_SSH_KEY" | tr -d '\r' | ssh-add -
           mkdir -p ~/.ssh
@@ -263,7 +263,7 @@ config-dev:
         fi
       fi
   needs:
-    - deploy-dev
+    - provision-dev
 
 destroy-dev:
   extends: [.destroy-env, .env-dev]
@@ -281,7 +281,7 @@ destroy-dev:
         git submodule update
       fi
       if scripts/deploy-env; then
-        echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) to <$CI_ENVIRONMENT_URL>"
+        echo "Destroy **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
         cd terraform
         terraform init -reconfigure -backend-config="address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG" -backend-config="lock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock" -backend-config="unlock_address=$GL_TF_BE/$CI_ENVIRONMENT_SLUG/lock"
         terraform destroy -auto-approve -var="ENV_SLUG=$CI_ENVIRONMENT_SLUG" -var="ENV_TIER=$CI_ENVIRONMENT_TIER"
@@ -290,7 +290,7 @@ destroy-dev:
     name: Development/$CI_COMMIT_REF_SLUG
     action: stop
   needs:
-    - deploy-dev
+    - provision-dev
   rules:
     - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != "main"
       when: manual
