@@ -1,3 +1,17 @@
+# [0.20.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.19.1...v0.20.0) (2023-05-01)
+
+
+### Bug Fixes
+
+* ansible galaxy shouldn't be run as a superuser ([3898595](https://gitlab.com/xebis/infrastructure-template/commit/3898595d515134820fc89e2e13af5e2335e92547))
+* pip hcloud is missing as a dependency in the bootstrap script ([2599285](https://gitlab.com/xebis/infrastructure-template/commit/2599285f8e124d31e942759381b52f9e6d80372a))
+* the bootstrap script snap installs wrong go package ([2c988e0](https://gitlab.com/xebis/infrastructure-template/commit/2c988e0727d79baa23e1ae6627e2d0c9af04066d))
+
+
+### Features
+
+* create-env decision making takes env tier into account ([454fefc](https://gitlab.com/xebis/infrastructure-template/commit/454fefc351baef921079f05fcaee05dfad501f16))
+
 ## [0.19.1](https://gitlab.com/xebis/infrastructure-template/compare/v0.19.0...v0.19.1) (2022-11-17)
 
 
