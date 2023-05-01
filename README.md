@@ -64,19 +64,19 @@ Automatically checks conventional commits, validates Markdown, YAML, shell scrip
 
 Environments are managed in stages:
 
-- **Deploy**: environment is provisioned by Terraform at Hetzner Cloud
-- **Config**: environment is configured by cloud-init and Ansible over SSH
+- **Provision**: environment is provisioned by Terraform at Hetzner Cloud and pre-configured by Cloud-init
+- **Install**: environment is installed by Ansible over SSH
 - **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
 ![Deploy and destroy in more detail](images/deploy-and-destroy.png)
 
 Automatically managed environments:
 
-- On *release* tag runs **production** environment deploy and config
-- On `main` branch commit runs **staging** environment deploy and config
+- On *release* tag runs **production** environment stages
+- On `main` branch commit runs **staging** environment stages
   - Releases and creates *release* tag when a commit starting `feat` or `fix` is present in the history from the previous release
-- On *pre-release* tag runs **testing/*tag*** environment deploy, config, and destroy with 1 week automatic, or manual destruction
-- On *non-*`main` branch commit under certain conditions runs **development/*branch*** environment deploy, config, and destroy with 1 week automatic, or manual destruction:
+- On *pre-release* tag runs **testing/*tag*** environment stages, and plans automatic destroy after 1 week (earlier manual destruction possible)
+- On *non-*`main` branch commit under certain conditions runs **development/*branch*** environment stages, and plans automatic destroy after 1 day (earlier manual destruction possible):
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
   - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using the **Run pipeline** *button in the GitLab UI* or created by using the *GitLab WebIDE*
   - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's non-empty the environment variable `ENV_CREATE` or `CREATE_ENV`
@@ -88,7 +88,7 @@ Automatically managed environments:
 
 Manually managed environments:
 
-- Create, update, or destroy any environment
+- All stages must be run manually and locally
 
 ### Environment
 
@@ -248,15 +248,15 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
     - [ ] `terraform destroy`
 - GitLab CI
   - [ ] Commit on a new *non-*`main` branch runs `validate:lint` and `validate:test-full`
-    - [ ] Without any environment variables, runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
-    - [ ] With non-empty environment variable `ENV_CREATE` or `CREATE_ENV`, runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
-  - [ ] Commit on an existing *non-*`main` branch within 24 hours runs `deploy:deploy-dev`, and prepares `destroy:destroy-dev`
+    - [ ] Without any environment variables, runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
+    - [ ] With non-empty environment variable `ENV_CREATE` or `CREATE_ENV`, runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Commit on an existing *non-*`main` branch within 24 hours runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
   - [ ] Absence of commit on an existing *non-*`main` branch within 24 hours auto-stops **development/*branch*** environment
-  - [ ] *Pre-release* tag on a *non-*`main` branch commit runs `validate:lint`, `validate:test-full`, `deploy:deploy-test`, and prepares `destroy:destroy-test`
+  - [ ] *Pre-release* tag on a *non-*`main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-test`, `install:install-test`, and prepares `destroy:destroy-test`
     - [ ] After a week auto-stops **testing/*tag*** environment
-  - [ ] Merge to the `main` branch runs `validate:lint`, `validate:test-full`, `deploy:deploy-stag`, and `release:release`
+  - [ ] Merge to the `main` branch runs `validate:lint`, `validate:test-full`, `provision:provision-stage`, `install:install-stage`, and `release:release`
     - [ ] With a new `feat` or `fix`, commit releases a new version
-    - [ ] *Release* tag on the `main` branch commit runs `validate:lint`, `validate:test-full` and `deploy:deploy-prod`
+    - [ ] *Release* tag on the `main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-prod`, and `install:install-prod`
     - [ ] Without a new feature or fix commit does not release a new version
   - [ ] Scheduled (nightly) pipeline runs `validate:lint` and `validate:test-nightly`
 
