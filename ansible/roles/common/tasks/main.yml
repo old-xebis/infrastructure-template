@@ -16,6 +16,7 @@
   register: reboot_required
   changed_when: reboot_required.stat.exists
   notify: Reboot machine
+  tags: reboot
 
 - name: Enforce reboot now rather than at the end of the playbook
   ansible.builtin.meta: flush_handlers
@@ -32,6 +33,7 @@
   ansible.builtin.apt:
     name:
       - mc
+      - screen
     state: present
 
 - name: Install monitoring tools deb packages
