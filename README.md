@@ -299,6 +299,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Ansible](https://www.ansible.com/)
   - [GitHub - ansible-community/ansible-lint: Best practices checker for Ansible](https://github.com/ansible-community/ansible-lint)
   - [GitHub - ansible-collections/hetzner.hcloud: A collection containing modules to manage resources on the Hetzner Cloud.](https://github.com/ansible-collections/hetzner.hcloud)
+    - [GitHub - hetznercloud/hcloud-python: hcloud-python is a library for the Hetzner Cloud API.](https://github.com/hetznercloud/hcloud-python)
   - [Ansible Documentation: Ansible.Posix](https://docs.ansible.com/ansible/latest/collections/ansible/posix/index.html)
 - [cloud-init](https://cloud-init.io/)
 - [Docker Hub - hashicorp/terraform](https://hub.docker.com/r/hashicorp/terraform/)
