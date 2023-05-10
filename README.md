@@ -152,7 +152,7 @@ export TF_VAR_ENV_NAME="<environment>" # Replace with the environment name
 export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 ```
 
-- Setup repository by `scripts/setup`, install dependencies by `sudo scripts/bootstrap` script, update repository by `scripts/update` script.
+- Install repository dependencies by `sudo scripts/bootstrap` script, setup repository by `scripts/setup`, update repository by `scripts/update` script.
 - Set up all admins and users, including public SSH key at [`ansible/group_vars/all.yml`](ansible/group_vars/all.yml) under section `users`, see documentation there. Do not forget to commit it 😀
 
 ## Usage
