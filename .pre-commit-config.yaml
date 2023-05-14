@@ -98,7 +98,6 @@ repos:
       - id: terraform_tflint
         args:
           - --args=--enable-rule=terraform_documented_variables
-      - id: terraform_checkov
   - repo: https://github.com/terraform-docs/terraform-docs
     rev: v0.16.0
     hooks:
@@ -109,3 +108,7 @@ repos:
     hooks:
       - id: ansible-lint
         args: [-c, .ansible-lint.yml]
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 2.3.240
+    hooks:
+      - id: checkov
