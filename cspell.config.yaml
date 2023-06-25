@@ -1,0 +1,25 @@
+---
+language: en
+version: "0.2"
+dictionaries:
+  - en_US
+  - softwareTerms
+  - bash
+  - words
+words:
+  - Bružina
+  - codespell
+  - Coreutils
+  - drawio
+  - gableroux
+  - gitleaks
+  - gitlint
+  - hcloud
+  - markdownlint
+  - nftables
+  - Pylance
+  - roadmap
+  - shellib
+  - tflint
+  - Xebis
+flagWords: []

@@ -37,22 +37,25 @@ repos:
         exclude: .*\.png$
       - id: git-check
       - id: git-dirty
+      - id: protect-first-parent
       - id: script-must-have-extension
         exclude: .*\.bats$
       - id: script-must-not-have-extension
   - repo: meta
     hooks:
+      - id: check-hooks-apply
+        stages: [manual]
       - id: check-useless-excludes
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.4
+    rev: v2.2.5
     hooks:
       - id: codespell
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.34.0
+    rev: v0.35.0
     hooks:
       - id: markdownlint
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.31.0
+    rev: v1.32.0
     hooks:
       - id: yamllint
         args: [--strict]
@@ -84,11 +87,11 @@ repos:
         language: system
         types: [shell]
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.16.3
+    rev: v8.17.0
     hooks:
       - id: gitleaks
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.77.1
+    rev: v1.81.0
     hooks:
       - id: terraform_fmt
         args:
@@ -104,11 +107,11 @@ repos:
       - id: terraform-docs-go
         args: [./terraform]
   - repo: https://github.com/ansible-community/ansible-lint
-    rev: v6.14.4
+    rev: v6.17.2
     hooks:
       - id: ansible-lint
         args: [-c, .ansible-lint.yml]
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 2.3.240
+    rev: 2.3.302
     hooks:
       - id: checkov
