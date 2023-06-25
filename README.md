@@ -40,7 +40,7 @@ The goal is to have a GitOps repository to automatically handle environments lif
 - [Usage](#usage)
   - [GitLab CI](#gitlab-ci)
   - [Local Usage](#local-usage)
-  - [Terraform Documentation](#terraform-documentation)
+  - [Terraform Configuration Documentation](#terraform-configuration-documentation)
 - [Contributing](#contributing)
   - [Testing](#testing)
 - [To-Do list](#to-do-list)
@@ -210,7 +210,7 @@ rm -rf terraform/.terraform # Uninit local workspace, this step is required if y
 
 Commit and push to run validations.
 
-### Terraform Documentation
+### Terraform Configuration Documentation
 
 See [Terraform/Docs/Terraform: `terraform/docs/tf.md`](terraform/docs/tf.md)
 
@@ -305,7 +305,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Docker Hub - hashicorp/terraform](https://hub.docker.com/r/hashicorp/terraform/)
 - [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)
 - [jq: jq is a lightweight and flexible command-line JSON processor](https://stedolan.github.io/jq/)
-- [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template)
+- [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) - contains GitLab CI/CD, set of useful scripts, `pre-commit`, `semantic-release`, and `Visual Studio Code` suggested extensions
 
 ### Recommendations
 
@@ -317,7 +317,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 
 - [Visual Studio Code](https://code.visualstudio.com/) with [Extensions for Visual Studio Code](https://marketplace.visualstudio.com/VSCode):
   - [HashiCorp Terraform](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
-  - [Ansible](https://marketplace.visualstudio.com/items?itemName=redhat.ansible)
+  - [Ansible](https://marketplace.visualstudio.com/items?itemName=redhat.ansible) - includes potentially unwanted extensions [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) (Ansible dependency) and [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance) (could be uninstalled)
 
 ### Further Reading
 
