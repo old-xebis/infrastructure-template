@@ -25,7 +25,7 @@ The goal is to have a GitOps repository to automatically handle environments lif
 
 > GitOps = IaC + MRs + CI/CD
 
-*[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)*
+_[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
 
 <!-- omit in toc -->
 ## Table of Contents
@@ -72,17 +72,17 @@ Environments are managed in stages:
 
 Automatically managed environments:
 
-- On *release* tag runs **production** environment stages
+- On _release_ tag runs **production** environment stages
 - On `main` branch commit runs **staging** environment stages
-  - Releases and creates *release* tag when a commit starting `feat` or `fix` is present in the history from the previous release
-- On *pre-release* tag runs **testing/*tag*** environment stages, and plans automatic destroy after 1 week (earlier manual destruction possible)
-- On *non-*`main` branch commit under certain conditions runs **development/*branch*** environment stages, and plans automatic destroy after 1 day (earlier manual destruction possible):
+  - Releases and creates _release_ tag when a commit starting `feat` or `fix` is present in the history from the previous release
+- On _pre-release_ tag runs **testing/_tag_** environment stages, and plans automatic destroy after 1 week (earlier manual destruction possible)
+- On _non-_`main` branch commit under certain conditions runs **development/_branch_** environment stages, and plans automatic destroy after 1 day (earlier manual destruction possible):
   - It runs when the environment already exists or existed in the past (when Terraform backend returns HTTP status code `200 OK` for the environment state file)
-  - It runs when the pipeline is run by the *pipelines API*, *GitLab ChatOps*, created by using *trigger token*, created by using the **Run pipeline** *button in the GitLab UI* or created by using the *GitLab WebIDE*
-  - It runs when the pipeline is by a *`git push` event* or is *scheduled pipeline*, but only if there's non-empty the environment variable `ENV_CREATE` or `CREATE_ENV`
+  - It runs when the pipeline is run by the _pipelines API_, _GitLab ChatOps_, created by using _trigger token_, created by using the **Run pipeline** _button in the GitLab UI_ or created by using the _GitLab WebIDE_
+  - It runs when the pipeline is by a _`git push` event_ or is _scheduled pipeline_, but only if there's non-empty the environment variable `ENV_CREATE` or `CREATE_ENV`
   - It doesn't run when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or the commit message contains `[env skip]` or `[skip env]`, using any capitalization
 
-**Development/*branch*** environment create or not decision:
+**Development/_branch_** environment create or not decision:
 
 ![Development environment create or not](images/development-environment-create-or-not.png)
 
@@ -98,11 +98,11 @@ Creates one machine for development and testing environments, or intentionally z
 - are rebooted when the update (or any earlier operation) requires a reboot
 - have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
 - have firewall built on `nftables`:
-  - **allows** any *localhost* traffic
-  - **allows** *incoming*, *forwarded*, and *outgoing* established and related connections
-  - **allows** *incoming* SSH connections, **rate limits** *incoming* ICMP and IGMP requests
-  - **allows** *forwarded* ICMP and IGMP requests
-  - **allows** *outgoing* DNS, NTP, HTTP, HTTPS, and SSH connections
+  - **allows** any _localhost_ traffic
+  - **allows** _incoming_, _forwarded_, and _outgoing_ established and related connections
+  - **allows** _incoming_ SSH connections, **rate limits** _incoming_ ICMP and IGMP requests
+  - **allows** _forwarded_ ICMP and IGMP requests
+  - **allows** _outgoing_ DNS, NTP, HTTP, HTTPS, and SSH connections
   - **extensible** by adding files in the directory `/etc/nftables/`:
     - rules - `inet-in-*.conf`, `inet-fwd-*.conf`, or `inet-out-*.conf`
     - chains - `inet-chain-*.conf`
@@ -129,8 +129,8 @@ One Hetzner cloud project is used for all environments, which brings a few cavea
 Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 - [Hetzner Cloud - referral link with €20 credit](https://hetzner.cloud/?ref=arhwlvW4nCxX)
-  - Hetzner Cloud Console -> Projects -> *Your Project* -> Security -> API Tokens -> Generate API Token `Read & Write`
-- Generate GitLab CI SSH keys `ssh-keygen -t rsa` (no passphrase, *to your secret file*, **do not commit it!**), file with `.pub` extension will be generated automatically, put `*.pub` file contents at [`cloud-config.yml`](cloud-config.yml) under section `users:name=gitlab-ci` to the `ssh_authorized_keys` as the first element, and commit it
+  - Hetzner Cloud Console -> Projects -> _Your Project_ -> Security -> API Tokens -> Generate API Token `Read & Write`
+- Generate GitLab CI SSH keys `ssh-keygen -t rsa` (no passphrase, _to your secret file_, **do not commit it!**), file with `.pub` extension will be generated automatically, put `*.pub` file contents at [`cloud-config.yml`](cloud-config.yml) under section `users:name=gitlab-ci` to the `ssh_authorized_keys` as the first element, and commit it
 
 ### Set up GitLab CI
 
@@ -138,7 +138,7 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
   - General > Visibility, project features, permissions > Operations: **on**
   - CI/CD > Variables:
     - Add variable: Key `HCLOUD_TOKEN`, Value `<token>`
-    - Add variable: Key `GL_CI_SSH_KEY`, Value *contents of your secret file* created by `ssh-keygen -t rsa` above
+    - Add variable: Key `GL_CI_SSH_KEY`, Value _contents of your secret file_ created by `ssh-keygen -t rsa` above
 
 ### Set up Local Usage
 
@@ -160,20 +160,20 @@ export TF_VAR_ENV_SLUG="<env>" # Replace with the environment slug
 ### GitLab CI
 
 - Commit and push to run validations
-- Push a *non-*`main` branch
-  - To create a **development/*branch*** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using the **Run pipeline** button in the GitLab UI
-  - Alternatively, you can create a **development/*branch*** environment directly by pushing or scheduling with `ENV_CREATE` or `CREATE_ENV` environment variable present, for example by running `git push -o ci.variable="CREATE_ENV=true"`
+- Push a _non-_`main` branch
+  - To create a **development/_branch_** environment you have to create a new pipeline for the branch using API, GitLab ChatOps, trigger token, or by using the **Run pipeline** button in the GitLab UI
+  - Alternatively, you can create a **development/_branch_** environment directly by pushing or scheduling with `ENV_CREATE` or `CREATE_ENV` environment variable present, for example by running `git push -o ci.variable="CREATE_ENV=true"`
   - Once created, the environment will be updated (or recreated if it was destroyed) with each subsequent pipeline on the branch
   - Environment deploy is skipped when the environment variable `ENV_SKIP` or `SKIP_ENV` is present, or commit message contains `[env skip]` or `[skip env]`, using any capitalization, or when CI pipeline is skipped altogether, for example using `git push -o ci.skip`
-  - Destroy **development/*branch*** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
-- Create a *pre-release* tag to create **testing/*tag*** environment
+  - Destroy **development/_branch_** environment manually, or wait until auto-stop (1 day from the last commit in the branch in GitLab, could be overridden in GitLab UI)
+- Create a _pre-release_ tag to create **testing/_tag_** environment
   - Pre-release tag must match regex `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`, see <https://regex101.com/r/G1OFXH/1>
-  - Destroy **testing/*tag*** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
+  - Destroy **testing/_tag_** environment manually, or wait until auto-stop (1 week, could be overridden in GitLab UI)
 - Merge to the `main` branch to create or update the **staging** environment
 - Creates or updates **production** environment when a commit starting `feat` or `fix` is present in the history from the previous release
-  - *Release* tag must match regex `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`, see <https://regex101.com/r/9DFqb3/1>
+  - _Release_ tag must match regex `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$`, see <https://regex101.com/r/9DFqb3/1>
 
-*Release* and *pre-release* tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
+_Release_ and _pre-release_ tags must follow SemVer string, see [Semantic Versioning 2.0.0: Is there a suggested regular expression (RegEx) to check a SemVer string?](https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)
 
 ### Local Usage
 
@@ -247,16 +247,16 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
     - [ ] `ansible-playbook`
     - [ ] `terraform destroy`
 - GitLab CI
-  - [ ] Commit on a new *non-*`main` branch runs `validate:lint` and `validate:test-full`
+  - [ ] Commit on a new _non-_`main` branch runs `validate:lint` and `validate:test-full`
     - [ ] Without any environment variables, runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
     - [ ] With non-empty environment variable `ENV_CREATE` or `CREATE_ENV`, runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
-  - [ ] Commit on an existing *non-*`main` branch within 24 hours runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
-  - [ ] Absence of commit on an existing *non-*`main` branch within 24 hours auto-stops **development/*branch*** environment
-  - [ ] *Pre-release* tag on a *non-*`main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-test`, `install:install-test`, and prepares `destroy:destroy-test`
-    - [ ] After a week auto-stops **testing/*tag*** environment
+  - [ ] Commit on an existing _non-_`main` branch within 24 hours runs `provision:provision-dev`, `install:install-dev`, and prepares `destroy:destroy-dev`
+  - [ ] Absence of commit on an existing _non-_`main` branch within 24 hours auto-stops **development/_branch_** environment
+  - [ ] _Pre-release_ tag on a _non-_`main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-test`, `install:install-test`, and prepares `destroy:destroy-test`
+    - [ ] After a week auto-stops **testing/_tag_** environment
   - [ ] Merge to the `main` branch runs `validate:lint`, `validate:test-full`, `provision:provision-stage`, `install:install-stage`, and `release:release`
     - [ ] With a new `feat` or `fix`, commit releases a new version
-    - [ ] *Release* tag on the `main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-prod`, and `install:install-prod`
+    - [ ] _Release_ tag on the `main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-prod`, and `install:install-prod`
     - [ ] Without a new feature or fix commit does not release a new version
   - [ ] Scheduled (nightly) pipeline runs `validate:lint` and `validate:test-nightly`
 

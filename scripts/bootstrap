@@ -9,11 +9,10 @@ LANG=C
 # Install dependencies
 function install_dependencies() {
     apt_add "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 'https://apt.releases.hashicorp.com/gpg'
-    pkgs install 'apt:git' 'apt:python3-pip' 'pip:pre-commit' 'pip:gitlint' 'pip:codespell' 'snap:node' 'npm:markdownlint-cli' \
-        'pip:yamllint' 'snap:shfmt' 'snap:shellcheck' 'apt:bats' \
-        'apt:terraform' \
+    pkgs install 'apt:git' 'apt:python3-pip' 'snap:node' 'npm:markdownlint-cli' 'snap:shfmt' 'snap:shellcheck' 'apt:bats' 'apt:terraform' \
         'curl2bash:tflint=https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh' \
-        'pip:checkov' 'snap:go' 'apt:ansible' 'pip:ansible-lint' 'pip:hcloud'
+        'snap:go' 'apt:ansible'
+    pip install -r requirements.txt
 }
 
 # Skip execution under test

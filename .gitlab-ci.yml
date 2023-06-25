@@ -19,7 +19,7 @@ variables:
   GL_TF_BE: https://gitlab.com/api/v4/projects/31099306/terraform/state
   TF_HTTP_PASSWORD: $CI_JOB_TOKEN
 
-lint:
+.lint:
   stage: validate
   variables:
     PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
@@ -27,20 +27,10 @@ lint:
   before_script:
     - *default_before_script
     - apk --no-cache add ansible bash curl git go grep libffi-dev npm py-pip python3-dev shellcheck shfmt terraform unzip
-    - pip install checkov pre-commit
+    - pip install -r requirements.txt
     - npm install -g markdownlint-cli
     - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
     - ansible-galaxy collection install ansible.posix
-  script:
-    - |
-      if [ -z "${GL_TOKEN:-}" ]; then
-          # Temporary skip checkov pre-commit hook until `Failed to download module *** (for external modules, the --download-external-modules flag is required)` is fixed
-          SKIP=gitlab-ci-linter,checkov pre-commit run -a --hook-stage manual
-      else
-          # Temporary skip gitlab-ci-linter pre-commit hook until `urllib.error.HTTPError: HTTP Error 410: Gone` is fixed
-          # Temporary skip checkov pre-commit hook until `Failed to download module *** (for external modules, the --download-external-modules flag is required)` is fixed
-          SKIP=gitlab-ci-linter,checkov GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run -a --hook-stage manual
-      fi
   cache:
     - key: default
       paths:
@@ -55,29 +45,81 @@ lint:
       unprotect: true
       when: always
   interruptible: true
+
+lint:
+  extends: [.lint]
+  script:
+    - |
+      # Temporary skip protect-first-parent pre-commit hook until `[ERROR] caught error 1 on line 69 of ...: FIRST_PARENT="$(git show-ref -s "${BASE}")"` is fixed
+      SKIP="check-hooks-apply,anti-todo,protect-first-parent"
+      if [ -z "${GL_TOKEN:-}" ]; then
+          # Temporary skip checkov pre-commit hook until `Failed to download module *** (for external modules, the --download-external-modules flag is required)` is fixed
+          SKIP=gitlab-ci-linter,checkov pre-commit run -a --hook-stage manual
+      else
+          # Temporary skip gitlab-ci-linter pre-commit hook until `urllib.error.HTTPError: HTTP Error 410: Gone` is fixed
+          # Temporary skip checkov pre-commit hook until `Failed to download module *** (for external modules, the --download-external-modules flag is required)` is fixed
+          SKIP=gitlab-ci-linter,checkov GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run -a --hook-stage manual
+      fi
   rules:
-    - when: always
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
+
+lint-merge-request:
+  extends: [.lint]
+  script:
+    - |
+      # Temporary skip protect-first-parent pre-commit hook until `[ERROR] caught error 1 on line 69 of ...: FIRST_PARENT="$(git show-ref -s "${BASE}")"` is fixed
+      SKIP="check-hooks-apply,protect-first-parent"
+      if [ -z "${GL_TOKEN:-}" ]; then
+          # Temporary skip checkov pre-commit hook until `Failed to download module *** (for external modules, the --download-external-modules flag is required)` is fixed
+          SKIP=gitlab-ci-linter,checkov pre-commit run -a --hook-stage manual
+      else
+          # Temporary skip gitlab-ci-linter pre-commit hook until `urllib.error.HTTPError: HTTP Error 410: Gone` is fixed
+          # Temporary skip checkov pre-commit hook until `Failed to download module *** (for external modules, the --download-external-modules flag is required)` is fixed
+          SKIP=gitlab-ci-linter,checkov GITLAB_PRIVATE_TOKEN="$GL_TOKEN" pre-commit run -a --hook-stage manual
+      fi
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 .test:
   stage: validate
+
+.test-alpine:
+  extends: [.test]
   before_script:
     - *default_before_script
     - apk --no-cache add bats git
+
+.test-ubuntu:
+  extends: [.test]
+  image: ubuntu:latest
+  before_script:
+    - apt-get update && apt-get upgrade -y
+    - apt-get install -y bats git
+
+.test-full:
   script:
     - scripts/test tests/full.set
-
-test-full:
-  extends: .test
   interruptible: true
   rules:
     - if: $CI_PIPELINE_SOURCE != "schedule"
 
-test-nightly:
-  extends: .test
+.test-nightly:
   script:
     - scripts/test tests/nightly.set
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
+
+test-alpine-full:
+  extends: [.test-alpine, .test-full]
+
+test-alpine-nightly:
+  extends: [.test-alpine, .test-nightly]
+
+test-ubuntu-full:
+  extends: [.test-ubuntu, .test-full]
+
+test-ubuntu-nightly:
+  extends: [.test-ubuntu, .test-nightly]
 
 .provision-env:
   stage: provision
