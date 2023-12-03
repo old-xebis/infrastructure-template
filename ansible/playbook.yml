@@ -3,6 +3,7 @@
   hosts:
     - env # Use `env` instead of `all` or `hcloud`, see README.md#caveats
   roles:
+    - xebis.ansible.system
     - common
     - firewall
     - security

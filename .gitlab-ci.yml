@@ -30,7 +30,7 @@ variables:
     - pip install -r requirements.txt
     - npm install -g markdownlint-cli
     - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-    - ansible-galaxy collection install ansible.posix
+    - ansible-galaxy collection install ansible.posix ansible.posix git+https://github.com/xebis/xebis-ansible-collection.git
   cache:
     - key: default
       paths:

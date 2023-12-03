@@ -94,8 +94,8 @@ Manually managed environments:
 
 Creates one machine for development and testing environments, or intentionally zero machines for staging and production environments. Each machine:
 
-- have updated packages
-- are rebooted when the update (or any earlier operation) requires a reboot
+- uses [Xebis Ansible Collection Features](https://github.com/xebis/xebis-ansible-collection#features)
+  - `xebis.ansible.system`: well maintained operating system - updates and upgrades deb packages including autoremove and autoclean, reboots the system (when necessary)
 - have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
 - have firewall built on `nftables`:
   - **allows** any _localhost_ traffic
@@ -306,6 +306,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)
 - [jq: jq is a lightweight and flexible command-line JSON processor](https://stedolan.github.io/jq/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) - contains GitLab CI/CD, set of useful scripts, `pre-commit`, `semantic-release`, and `Visual Studio Code` suggested extensions
+- [GitHub - xebis/xebis-ansible-collection: A collection of Xebis shared Ansible roles.](https://github.com/xebis/xebis-ansible-collection)
 
 ### Recommendations
 

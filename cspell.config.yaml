@@ -7,6 +7,7 @@ dictionaries:
   - bash
   - words
 words:
+  - autoclean
   - Bružina
   - codespell
   - Coreutils
