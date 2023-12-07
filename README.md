@@ -64,8 +64,9 @@ Automatically checks conventional commits, validates Markdown, YAML, shell scrip
 
 Environments are managed in stages:
 
-- **Provision**: environment is provisioned by Terraform at Hetzner Cloud and pre-configured by Cloud-init
-- **Install**: environment is installed by Ansible over SSH
+- **_Deploy_**: overarching name for **provision** and **install** stages
+  - **Provision**: environment is provisioned by Terraform at Hetzner Cloud and pre-configured by Cloud-init
+  - **Install**: environment is installed by Ansible over SSH
 - **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
 ![Deploy and destroy in more detail](images/deploy-and-destroy.png)
