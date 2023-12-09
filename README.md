@@ -97,9 +97,10 @@ Manually managed environments:
 Creates one machine for development and testing environments, or intentionally zero machines for staging and production environments. Each machine:
 
 - uses [Xebis Ansible Collection Features](https://github.com/xebis/xebis-ansible-collection#features)
-  - `xebis.ansible.system`: well maintained operating system - updates and upgrades deb packages including autoremove and autoclean, reboots the system (when necessary)
+  - `xebis.ansible.system`: Well maintained operating system - updates and upgrades `deb` packages including autoremove and autoclean, reboots the system (when necessary), provides `Reboot machine` handler
+  - `xebis.ansible.firewall`: Extensible nftables firewall  - installs `nftables` and sets up basic extensible nftables chains and rules, provides `Reload nftables` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
 - have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
-- have firewall built on `nftables`:
+- have firewall built by `xebis.ansible.firewall` on `nftables`:
   - **allows** any _localhost_ traffic
   - **allows** _incoming_, _forwarded_, and _outgoing_ established and related connections
   - **allows** _incoming_ SSH connections, **rate limits** _incoming_ ICMP and IGMP requests
@@ -110,6 +111,7 @@ Creates one machine for development and testing environments, or intentionally z
     - chains - `inet-chain-*.conf`
   - **rejects** not allowed traffic, **drops** invalid and faulty packets
     - **logs** packets rejected by the rules when `nftables_log_rejected` is defined and `true`
+  - see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
 - have `fail2ban` installed, set up, and running
 
 ### Caveats
