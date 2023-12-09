@@ -43,6 +43,7 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
   - [Terraform Configuration Documentation](#terraform-configuration-documentation)
 - [Contributing](#contributing)
   - [Testing](#testing)
+    - [Test at Docker Container](#test-at-docker-container)
 - [To-Do list](#to-do-list)
 - [Roadmap](#roadmap)
 - [Credits and Acknowledgments](#credits-and-acknowledgments)
@@ -260,6 +261,32 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
     - [ ] _Release_ tag on the `main` branch commit runs `validate:lint`, `validate:test-full`, `provision:provision-prod`, and `install:install-prod`
     - [ ] Without a new feature or fix commit does not release a new version
   - [ ] Scheduled (nightly) pipeline runs `validate:lint` and `validate:test-nightly`
+
+#### Test at Docker Container
+
+To test your changes in a different environment, you might try to run a Docker container and test it from there.
+
+Run a disposal Docker container:
+
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template alpine:latest`
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template --entrypoint sh hashicorp/terraform:light`
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template --entrypoint sh gableroux/ansible:latest`
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template --entrypoint sh node:alpine`
+
+In the container:
+
+```bash
+cd infrastructure-template
+# Set variables GL_TOKEN and GH_TOKEN when needed
+# Put here commands from .gitlab-ci.yml job:before_script and job:script
+# For example job test-full:
+apk -U upgrade
+apk add bats
+bats tests
+# Result is similar to:
+# 1..1
+# ok 1 dummy test
+```
 
 ## To-Do list
 
