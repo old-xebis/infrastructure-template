@@ -21,6 +21,7 @@ variables:
 
 .lint:
   stage: validate
+  image: alpine:3.18
   variables:
     PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
     PRE_COMMIT_HOME: $CI_PROJECT_DIR/.cache/pre-commit
