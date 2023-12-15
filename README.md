@@ -43,6 +43,7 @@ _[GitLab: What is GitOps?](https://about.gitlab.com/topics/gitops/)_
   - [Terraform Configuration Documentation](#terraform-configuration-documentation)
 - [Contributing](#contributing)
   - [Testing](#testing)
+    - [Test at Docker Container](#test-at-docker-container)
 - [To-Do list](#to-do-list)
 - [Roadmap](#roadmap)
 - [Credits and Acknowledgments](#credits-and-acknowledgments)
@@ -64,8 +65,9 @@ Automatically checks conventional commits, validates Markdown, YAML, shell scrip
 
 Environments are managed in stages:
 
-- **Provision**: environment is provisioned by Terraform at Hetzner Cloud and pre-configured by Cloud-init
-- **Install**: environment is installed by Ansible over SSH
+- **_Deploy_**: overarching name for **provision** and **install** stages
+  - **Provision**: environment is provisioned by Terraform at Hetzner Cloud and pre-configured by Cloud-init
+  - **Install**: environment is installed by Ansible over SSH
 - **Destroy** (only dynamic environments): environment is removed by Terraform from Hetzner Cloud
 
 ![Deploy and destroy in more detail](images/deploy-and-destroy.png)
@@ -94,10 +96,11 @@ Manually managed environments:
 
 Creates one machine for development and testing environments, or intentionally zero machines for staging and production environments. Each machine:
 
-- have updated packages
-- are rebooted when the update (or any earlier operation) requires a reboot
+- uses [Xebis Ansible Collection Features](https://github.com/xebis/xebis-ansible-collection#features)
+  - `xebis.ansible.system`: Well maintained operating system - updates and upgrades `deb` packages including autoremove and autoclean, reboots the system (when necessary), provides `Reboot machine` handler
+  - `xebis.ansible.firewall`: Extensible nftables firewall  - installs `nftables` and sets up basic extensible nftables chains and rules, provides `Reload nftables` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
 - have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
-- have firewall built on `nftables`:
+- have firewall built by `xebis.ansible.firewall` on `nftables`:
   - **allows** any _localhost_ traffic
   - **allows** _incoming_, _forwarded_, and _outgoing_ established and related connections
   - **allows** _incoming_ SSH connections, **rate limits** _incoming_ ICMP and IGMP requests
@@ -108,6 +111,7 @@ Creates one machine for development and testing environments, or intentionally z
     - chains - `inet-chain-*.conf`
   - **rejects** not allowed traffic, **drops** invalid and faulty packets
     - **logs** packets rejected by the rules when `nftables_log_rejected` is defined and `true`
+  - see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
 - have `fail2ban` installed, set up, and running
 
 ### Caveats
@@ -260,6 +264,32 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
     - [ ] Without a new feature or fix commit does not release a new version
   - [ ] Scheduled (nightly) pipeline runs `validate:lint` and `validate:test-nightly`
 
+#### Test at Docker Container
+
+To test your changes in a different environment, you might try to run a Docker container and test it from there.
+
+Run a disposal Docker container:
+
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template alpine:latest`
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template --entrypoint sh hashicorp/terraform:light`
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template --entrypoint sh gableroux/ansible:latest`
+- `sudo docker run -it --rm -v "$(pwd)":/infrastructure-template --entrypoint sh node:alpine`
+
+In the container:
+
+```bash
+cd infrastructure-template
+# Set variables GL_TOKEN and GH_TOKEN when needed
+# Put here commands from .gitlab-ci.yml job:before_script and job:script
+# For example job test-full:
+apk -U upgrade
+apk add bats
+bats tests
+# Result is similar to:
+# 1..1
+# ok 1 dummy test
+```
+
 ## To-Do list
 
 - [ ] Fix workaround for pre-commit `jumanjihouse/pre-commit-hooks` hook `script-must-have-extension` - `*.bats` shouldn't be excluded
@@ -306,6 +336,7 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
 - [Docker Hub - gableroux/ansible](https://hub.docker.com/r/gableroux/ansible)
 - [jq: jq is a lightweight and flexible command-line JSON processor](https://stedolan.github.io/jq/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) - contains GitLab CI/CD, set of useful scripts, `pre-commit`, `semantic-release`, and `Visual Studio Code` suggested extensions
+- [GitHub - xebis/xebis-ansible-collection: A collection of Xebis shared Ansible roles.](https://github.com/xebis/xebis-ansible-collection)
 
 ### Recommendations
 

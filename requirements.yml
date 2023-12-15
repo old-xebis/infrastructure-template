@@ -1,0 +1,4 @@
+---
+collections:
+  - name: ansible.posix
+  - name: git+https://github.com/xebis/xebis-ansible-collection.git,main
