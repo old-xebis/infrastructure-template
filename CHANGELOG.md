@@ -1,3 +1,16 @@
+# [0.21.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.20.0...v0.21.0) (2023-12-15)
+
+
+### Bug Fixes
+
+* ansible role dependencies references wrong role ([4970bf1](https://gitlab.com/xebis/infrastructure-template/commit/4970bf1ad77009f5f1f243139dba434e7d03b1f5))
+* checkov fails on bats helpers ([4f27884](https://gitlab.com/xebis/infrastructure-template/commit/4f278846fa93aaaf9966d8eec9d323ac0bcbc71b))
+
+
+### Features
+
+* replace manual ansible-galaxy dependencies with requirements.yml ([83cb25b](https://gitlab.com/xebis/infrastructure-template/commit/83cb25bc296ab185b9fe7fdf672dd3b269795d10))
+
 # [0.20.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.19.1...v0.20.0) (2023-05-01)
 
 
