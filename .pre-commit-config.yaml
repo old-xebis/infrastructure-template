@@ -115,3 +115,4 @@ repos:
     rev: 2.5.8
     hooks:
       - id: checkov
+        args: [--skip-path, /tests/helpers]
