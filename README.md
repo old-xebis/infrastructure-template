@@ -134,7 +134,8 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 ### Set up Local Usage
 
-You can edit and source `scripts/secrets.sh` script, **please make sure you won't commit your secrets**.
+Make sure **GL_TOKEN**: [GitLab Personal Access Token](https://gitlab.com/-/profile/personal_access_tokens) with scope `api` is present, otherwise `gitlab-ci-linter` is skipped. To run Terraform provisioning Hetzner Cloud you have to set up `TF_HTTP_PASSWORD`, `HCLOUD_TOKEN`, `TF_VAR_ENV_NAME`, and `TF_VAR_ENV_SLUG` required by Terraform configuration.
+To load secrets you can use shell extension like [direnv](https://direnv.net/), encryption like [SOPS](https://github.com/getsops/sops), or secrets manager [HashiCorp Vault](https://www.vaultproject.io/), **please make sure you won't commit your secrets**.
 
 ```shell
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
@@ -220,7 +221,6 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
   - [ ] [`scripts/deploy-env`](scripts/deploy-env)
   - [ ] [`scripts/pre-commit`](scripts/pre-commit)
   - [ ] [`scripts/pre-push`](scripts/pre-push)
-  - [ ] [`scripts/secrets.sh`](scripts/secrets.sh)
   - [ ] [`scripts/setup`](scripts/setup)
   - [ ] [`scripts/test`](scripts/test)
   - [ ] [`scripts/update`](scripts/update)
