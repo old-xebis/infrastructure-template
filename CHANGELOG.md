@@ -1,3 +1,10 @@
+# [0.22.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.21.0...v0.22.0) (2023-12-25)
+
+
+### Features
+
+* replace local roles with xebis.ansible collection roles ([6cd371f](https://gitlab.com/xebis/infrastructure-template/commit/6cd371f0e4aff327b6e73561347a52f8fb822f92))
+
 # [0.21.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.20.0...v0.21.0) (2023-12-15)
 
 
