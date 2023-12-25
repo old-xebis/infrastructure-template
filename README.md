@@ -94,25 +94,13 @@ Manually managed environments:
 
 ### Environment
 
-Creates one machine for development and testing environments, or intentionally zero machines for staging and production environments. Each machine:
+Creates one machine for development and testing environments, or intentionally zero machines for staging and production environments. Each machine uses [Xebis Ansible Collection](https://github.com/xebis/xebis-ansible-collection) roles:
 
-- uses [Xebis Ansible Collection Features](https://github.com/xebis/xebis-ansible-collection#features)
-  - `xebis.ansible.system`: Well maintained operating system - updates and upgrades `deb` packages including autoremove and autoclean, reboots the system (when necessary), provides `Reboot machine` handler
-  - `xebis.ansible.firewall`: Extensible nftables firewall  - installs `nftables` and sets up basic extensible nftables chains and rules, provides `Reload nftables` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
-- have installed common packages (e.g. `curl`, `mc`, `htop`, for more details see [Ansible role `common` tasks `main`](ansible/roles/common/tasks/main.yml))
-- have firewall built by `xebis.ansible.firewall` on `nftables`:
-  - **allows** any _localhost_ traffic
-  - **allows** _incoming_, _forwarded_, and _outgoing_ established and related connections
-  - **allows** _incoming_ SSH connections, **rate limits** _incoming_ ICMP and IGMP requests
-  - **allows** _forwarded_ ICMP and IGMP requests
-  - **allows** _outgoing_ DNS, NTP, HTTP, HTTPS, and SSH connections
-  - **extensible** by adding files in the directory `/etc/nftables/`:
-    - rules - `inet-in-*.conf`, `inet-fwd-*.conf`, or `inet-out-*.conf`
-    - chains - `inet-chain-*.conf`
-  - **rejects** not allowed traffic, **drops** invalid and faulty packets
-    - **logs** packets rejected by the rules when `nftables_log_rejected` is defined and `true`
-  - see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
-- have `fail2ban` installed, set up, and running
+- `xebis.ansible.system`: Well maintained operating system - updates and upgrades `deb` packages including autoremove and autoclean, reboots the system (when necessary), provides `Reboot machine` handler
+- `xebis.ansible.firewall`: Extensible nftables firewall - installs `nftables` and sets up basic extensible nftables chains and rules, provides `Reload nftables` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
+- `xebis.ansible.fail2ban`: Fail2ban service - installs `fail2ban` and sets it up as a systemd service
+- `xebis.ansible.iam`: IAM - creates user groups and users as regular users or admins, their public SSH keys, disables password remote logins, provides `Restart sshd` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
+- `xebis.ansible.admin`: Administration essentials - installs and sets up `at`, `curl`, `htop`, `mc`, `screen`
 
 ### Caveats
 
@@ -146,7 +134,8 @@ Prepare Hetzner Cloud API token and GitLab CI SSH keys:
 
 ### Set up Local Usage
 
-You can edit and source `scripts/secrets.sh` script, **please make sure you won't commit your secrets**.
+Make sure **GL_TOKEN**: [GitLab Personal Access Token](https://gitlab.com/-/profile/personal_access_tokens) with scope `api` is present, otherwise `gitlab-ci-linter` is skipped. To run Terraform provisioning Hetzner Cloud you have to set up `TF_HTTP_PASSWORD`, `HCLOUD_TOKEN`, `TF_VAR_ENV_NAME`, and `TF_VAR_ENV_SLUG` required by Terraform configuration.
+To load secrets you can use shell extension like [direnv](https://direnv.net/), encryption like [SOPS](https://github.com/getsops/sops), or secrets manager [HashiCorp Vault](https://www.vaultproject.io/), **please make sure you won't commit your secrets**.
 
 ```shell
 export GL_TOKEN="<token>" # Your GitLab's personal access token with the api scope
@@ -232,7 +221,6 @@ Please read [CONTRIBUTING](CONTRIBUTING.md) for details on our code of conduct, 
   - [ ] [`scripts/deploy-env`](scripts/deploy-env)
   - [ ] [`scripts/pre-commit`](scripts/pre-commit)
   - [ ] [`scripts/pre-push`](scripts/pre-push)
-  - [ ] [`scripts/secrets.sh`](scripts/secrets.sh)
   - [ ] [`scripts/setup`](scripts/setup)
   - [ ] [`scripts/test`](scripts/test)
   - [ ] [`scripts/update`](scripts/update)
