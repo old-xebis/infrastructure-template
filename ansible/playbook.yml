@@ -5,6 +5,6 @@
   roles:
     - xebis.ansible.system
     - xebis.ansible.firewall
-    - common
-    - security
-    - access
+    - xebis.ansible.fail2ban
+    - xebis.ansible.iam
+    - xebis.ansible.admin

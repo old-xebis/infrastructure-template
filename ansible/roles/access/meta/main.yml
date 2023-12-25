@@ -1,5 +1,0 @@
----
-dependencies:
-  - role: xebis.ansible.system
-  - role: xebis.ansible.firewall
-  - role: security
