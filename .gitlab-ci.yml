@@ -134,8 +134,9 @@ test-ubuntu-nightly:
   image: gableroux/ansible:latest
   before_script:
     - *default_before_script
-    - apk --no-cache add jq
+    - apk --no-cache add git jq
     - pip install hcloud
+    - ansible-galaxy collection install -r requirements.yml
   script:
     - echo "Install **$CI_ENVIRONMENT_NAME** environment \`$CI_ENVIRONMENT_SLUG\` (tier $CI_ENVIRONMENT_TIER) at <$CI_ENVIRONMENT_URL>"
     - sed -i "s/env-slug/$CI_ENVIRONMENT_SLUG/" ansible/hcloud.yml
@@ -278,8 +279,9 @@ install-dev:
   extends: [.install-env, .env-dev]
   before_script:
     - *default_before_script
-    - apk --no-cache add bash curl jq
+    - apk --no-cache add bash curl git jq
     - pip install hcloud
+    - ansible-galaxy collection install -r requirements.yml
   script:
     - |
       if scripts/deploy-env; then
