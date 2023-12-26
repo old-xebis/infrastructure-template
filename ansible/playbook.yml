@@ -7,4 +7,5 @@
     - xebis.ansible.firewall
     - xebis.ansible.fail2ban
     - xebis.ansible.iam
+    - xebis.ansible.bash
     - xebis.ansible.admin
