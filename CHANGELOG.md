@@ -1,3 +1,10 @@
+# [0.23.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.22.0...v0.23.0) (2023-12-26)
+
+
+### Features
+
+* add xebis.ansible.bash ([c5be943](https://gitlab.com/xebis/infrastructure-template/commit/c5be943ac7f97121e204580c59665c1e9caa4d42))
+
 # [0.22.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.21.0...v0.22.0) (2023-12-25)
 
 
