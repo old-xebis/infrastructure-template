@@ -189,7 +189,6 @@ terraform init -reconfigure \
   - Change to Ansible configuration directory `pushd ../ansible`
   - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`
   - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
-  - List or graph inventory: `ansible-inventory -i hcloud.yml --list # or --graph`
   - Ping: `ansible -u user -i hcloud.yml env -m ansible.builtin.ping`
   - Get all facts: `ansible -u user -i hcloud.yml env -m ansible.builtin.setup`
   - Configure with playbook: `ansible-playbook -u user -i hcloud.yml playbook.yml`
