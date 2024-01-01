@@ -116,6 +116,6 @@ repos:
     rev: 3.1.50
     hooks:
       - id: checkov
-        args: [--skip-path, .cache/, --skip-path, /tests/helpers, --skip-path, /scripts/shellib]
+        args: [--skip-path, .cache/, --skip-path, tests/helpers/, --skip-path, scripts/shellib/]
         files: .*
       - id: checkov_secrets
