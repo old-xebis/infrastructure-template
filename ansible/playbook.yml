@@ -8,4 +8,5 @@
     - xebis.ansible.fail2ban
     - xebis.ansible.iam
     - xebis.ansible.bash
+    - xebis.ansible.starship
     - xebis.ansible.admin
