@@ -6,13 +6,13 @@
 | Name | Version |
 |------|---------|
 | terraform | >= 1.2.0 |
-| hcloud | 1.32.0 |
+| hcloud | >= 1.32.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| hcloud | 1.32.0 |
+| hcloud | 1.44.1 |
 
 ## Modules
 
@@ -22,7 +22,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [hcloud_server.test](https://registry.terraform.io/providers/hetznercloud/hcloud/1.32.0/docs/resources/server) | resource |
+| [hcloud_server.test](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/server) | resource |
 
 ## Inputs
 

@@ -128,7 +128,7 @@ setup() {
 
     assert_success
     assert_line -n 0 'scripts/setup ✓ commit-msg hook is installed'
-    assert_line -n 1 'collection install ansible.posix git+https://github.com/xebis/xebis-ansible-collection.git'
+    assert_line -n 1 'collection install -r requirements.yml'
     assert_line -n 2 'scripts/setup 🛈 environment variable GL_TOKEN is not set, pre-commit hook gitlab-ci-linter will be skipped'
     assert_line -n 3 'scripts/setup 💡 You might set up environment variable GL_TOKEN'
 }
@@ -160,7 +160,7 @@ setup() {
 
     assert_success
     assert_line -n 0 'scripts/setup ✓ commit-msg hook is installed'
-    assert_line -n 1 'collection install ansible.posix git+https://github.com/xebis/xebis-ansible-collection.git'
+    assert_line -n 1 'collection install -r requirements.yml'
     assert_line -n 2 'scripts/setup ✓ GL_TOKEN is set'
 }
 
