@@ -1,3 +1,10 @@
+# [0.24.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.23.0...v0.24.0) (2024-1-1)
+
+
+### Features
+
+* add xebis.ansible.starship role to playbook ([e31451f](https://gitlab.com/xebis/infrastructure-template/commit/e31451f2013fb6fa448d79255ec6c38a066515e9))
+
 # [0.23.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.22.0...v0.23.0) (2023-12-26)
 
 
