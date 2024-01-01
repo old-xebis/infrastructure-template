@@ -50,8 +50,8 @@ function setup() {
 
     popd 1>/dev/null
 
-    # Install Ansible Galaxy ansible.posix collection
-    ansible-galaxy collection install ansible.posix git+https://github.com/xebis/xebis-ansible-collection.git
+    # Install Ansible Galaxy dependencies
+    ansible-galaxy collection install -r requirements.yml
 
     # Check if GL_TOKEN is set
     if [ -z "${GL_TOKEN:-}" ]; then

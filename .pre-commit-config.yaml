@@ -51,7 +51,7 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.37.0
+    rev: v0.38.0
     hooks:
       - id: markdownlint
   - repo: https://github.com/adrienverge/yamllint.git
@@ -63,6 +63,7 @@ repos:
     rev: v1.0.6
     hooks:
       - id: gitlab-ci-linter
+        args: [--project, xebis/infrastructure-template]
   - repo: local
     hooks:
       - id: anti-todo
@@ -87,11 +88,11 @@ repos:
         language: system
         types: [shell]
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.17.0
+    rev: v8.18.1
     hooks:
       - id: gitleaks
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.83.5
+    rev: v1.86.0
     hooks:
       - id: terraform_fmt
         args:
@@ -102,17 +103,19 @@ repos:
         args:
           - --args=--enable-rule=terraform_documented_variables
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: v0.16.0
+    rev: v0.17.0
     hooks:
       - id: terraform-docs-go
         args: [./terraform]
   - repo: https://github.com/ansible-community/ansible-lint
-    rev: v6.20.3
+    rev: v6.22.1
     hooks:
       - id: ansible-lint
         args: [-c, .ansible-lint.yml]
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 2.5.8
+    rev: 3.1.50
     hooks:
       - id: checkov
-        args: [--skip-path, .cache/, --skip-path, tests/helpers/]
+        args: [--skip-path, .cache/, --skip-path, /tests/helpers, --skip-path, /scripts/shellib]
+        files: .*
+      - id: checkov_secrets
