@@ -32,7 +32,7 @@ No modules.
 | image | Name or ID of the image the server is created from. | `string` | `"ubuntu-22.04"` | no |
 | labels | User-defined labels (key-value pairs). | `map(string)` | `{}` | no |
 | location | The location name to create the server in. | `string` | n/a | yes |
-| name | Name of the server to create. | `string` | n/a | yes |
+| name\_prefix | Prefix of the resources name to create. | `string` | n/a | yes |
 | number | Number of instances to create. | `number` | `0` | no |
 | server\_type | Name of the server type this server should be created with. | `string` | `"cx11"` | no |
 | user\_data | Cloud-Init user data to use during server creation. | `string` | n/a | yes |

@@ -4,8 +4,8 @@ variable "number" {
   default = 0
 }
 
-variable "name" {
-  description = "Name of the server to create."
+variable "name_prefix" {
+  description = "Prefix of the resources name to create."
   type = string
   nullable = false
 }
