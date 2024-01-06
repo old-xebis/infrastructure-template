@@ -101,6 +101,7 @@ Creates one machine for development and testing environments, or intentionally z
 - `xebis.ansible.fail2ban`: Fail2ban service - installs `fail2ban` and sets it up as a systemd service
 - `xebis.ansible.iam`: IAM - creates user groups and users as regular users or admins, their public SSH keys, disables password remote logins, provides `Restart sshd` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
 - `xebis.ansible.bash`:Extensible Bash - installs `~/.bash_aliases` and sets up basic extensible Bash aliases, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
+- `xebis.ansible.starship`: Starship CLI prompt - Installs `starship` and sets up improved PowerLine configuration
 - `xebis.ansible.admin`: Administration essentials - installs and sets up `at`, `curl`, `htop`, `mc`, `screen`
 
 ### Caveats
