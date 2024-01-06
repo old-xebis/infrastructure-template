@@ -5,7 +5,7 @@ module "nodes" {
   source = "./modules/nodes"
 
   number = local.count
-  name = "${local.env.slug}-node"
+  name_prefix = "${local.env.slug}-"
   server_type = "cx21"
   image = "ubuntu-22.04"
   location = "nbg1"
