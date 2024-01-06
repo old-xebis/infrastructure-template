@@ -10,3 +10,5 @@
     - xebis.ansible.bash
     - xebis.ansible.starship
     - xebis.ansible.admin
+    - role: lablabs.rke2
+      become: true

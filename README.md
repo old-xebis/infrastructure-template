@@ -104,6 +104,10 @@ Creates one machine for development and testing environments, or intentionally z
 - `xebis.ansible.starship`: Starship CLI prompt - Installs `starship` and sets up improved PowerLine configuration
 - `xebis.ansible.admin`: Administration essentials - installs and sets up `at`, `curl`, `htop`, `mc`, `screen`
 
+Each machine uses [LabLabs RKE2 Ansible Role](https://github.com/lablabs/ansible-role-rke2):
+
+- `lablabs.rke2`: Ansible Role to install RKE2 Kubernetes.
+
 ### Caveats
 
 One Hetzner cloud project is used for all environments, which brings a few caveats to keep in one's mind:
@@ -327,6 +331,7 @@ bats tests
 - [jq: jq is a lightweight and flexible command-line JSON processor](https://stedolan.github.io/jq/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) - contains GitLab CI/CD, set of useful scripts, `pre-commit`, `semantic-release`, and `Visual Studio Code` suggested extensions
 - [GitHub - xebis/xebis-ansible-collection: A collection of Xebis shared Ansible roles.](https://github.com/xebis/xebis-ansible-collection)
+- [GitHub - lablabs/ansible-role-rke2: Ansible Role to install RKE2 Kubernetes.](https://github.com/lablabs/ansible-role-rke2) and [Ansible Galaxy - lablabs.rke2](https://galaxy.ansible.com/ui/standalone/roles/lablabs/rke2/)
 
 ### Recommendations
 
