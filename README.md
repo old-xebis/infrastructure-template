@@ -206,7 +206,8 @@ Commit and push to run validations.
 
 ### Terraform Configuration Documentation
 
-See [Terraform/Docs/Terraform: `terraform/docs/tf.md`](terraform/docs/tf.md)
+- [Terraform Root module: `terraform/README.md`](terraform/README.md)
+  - [Terraform Nodes module: `terraform/modules/nodes/README.md`](terraform/modules/nodes/README.md)
 
 ## Contributing
 

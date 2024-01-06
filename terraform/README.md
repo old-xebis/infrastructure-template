@@ -1,4 +1,4 @@
-# Infrastructure Template Terraform Documentation
+# Infrastructure Template Terraform
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

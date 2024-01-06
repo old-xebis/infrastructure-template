@@ -2,7 +2,10 @@
 formatter: markdown table
 
 output:
-  file: docs/tf.md
+  file: README.md
+
+recursive:
+  enabled: true
 
 settings:
   anchor: false
