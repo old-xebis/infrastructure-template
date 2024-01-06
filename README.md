@@ -184,8 +184,8 @@ terraform init -reconfigure \
 ```
 
 - Create or update environment by `terraform apply` or `terraform apply -auto-approve`
-- Get server IP address by `terraform output hcloud_server_test_ipv4_address`
-- Direct SSH by `ssh user@$(terraform output -raw hcloud_server_test_ipv4_address)`
+- Get nodes IP addresses by `terraform output nodes_ipv4_addresses`
+- Direct SSH by `ssh user@$(terraform output -raw nodes_ipv4_addresses)`
 - Ansible:
   - Change to Ansible configuration directory `pushd ../ansible`
   - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`

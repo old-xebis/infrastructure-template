@@ -23,6 +23,7 @@ variable "ENV_TIER" {
     error_message = "The ENV_TIER value must be one of \"production\", \"staging\", \"testing\", \"development\", or \"other\"."
   }
 }
+
 locals {
   env = {
     slug = var.ENV_SLUG
