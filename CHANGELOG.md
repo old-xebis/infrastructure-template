@@ -1,3 +1,17 @@
+# [0.25.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.24.0...v0.25.0) (2024-1-6)
+
+
+### Bug Fixes
+
+* placement group name conflict between environments ([fb5add7](https://gitlab.com/xebis/infrastructure-template/commit/fb5add743bcac4d3a47279d0b9150c267de2dcca))
+
+
+### Features
+
+* add kubernetes as single node cluster ([4b92b64](https://gitlab.com/xebis/infrastructure-template/commit/4b92b645808e499fefcd4953051312ab664fbf89))
+* manage hetzner servers in terraform nodes module ([838189b](https://gitlab.com/xebis/infrastructure-template/commit/838189bb67c81b9f787fd65084852fa0bdc9bdec))
+* tf-doc documents all modules to local dir readme ([3ae60e3](https://gitlab.com/xebis/infrastructure-template/commit/3ae60e34e56ad883a6d58190d861b9e92ad798e1))
+
 # [0.24.0](https://gitlab.com/xebis/infrastructure-template/compare/v0.23.0...v0.24.0) (2024-1-1)
 
 
