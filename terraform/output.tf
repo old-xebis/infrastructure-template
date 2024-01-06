@@ -13,12 +13,7 @@ output "environment_count" {
   description = "Environment specific resource count (for debugging)"
 }
 
-output "hcloud_server_test_name" {
-  value       = length(hcloud_server.test) > 0 ? hcloud_server.test[0].name : null
-  description = "Test server name"
-}
-
-output "hcloud_server_test_ipv4_address" {
-  value       = length(hcloud_server.test) > 0 ? hcloud_server.test[0].ipv4_address : null
-  description = "Test server public IPv4 address"
+output "nodes_ipv4_addresses" {
+  value       = module.nodes.ipv4_addresses
+  description = "Nodes public IPv4 addresses"
 }

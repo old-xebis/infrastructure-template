@@ -1,3 +1,5 @@
 ---
 collections:
   - name: git+https://github.com/xebis/xebis-ansible-collection.git,main
+roles:
+  - name: lablabs.rke2

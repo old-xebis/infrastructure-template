@@ -1,4 +1,4 @@
-# Infrastructure Template Terraform Documentation
+# Infrastructure Template Terraform
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -10,19 +10,17 @@
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| hcloud | 1.44.1 |
+No providers.
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| nodes | ./modules/nodes | n/a |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [hcloud_server.test](https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs/resources/server) | resource |
+No resources.
 
 ## Inputs
 
@@ -38,6 +36,5 @@ No modules.
 | environment\_count | Environment specific resource count (for debugging) |
 | environment\_slug | Environment slug (for debugging) |
 | environment\_tier | Environment tier (for debugging) |
-| hcloud\_server\_test\_ipv4\_address | Test server public IPv4 address |
-| hcloud\_server\_test\_name | Test server name |
+| nodes\_ipv4\_addresses | Nodes public IPv4 addresses |
 <!-- END_TF_DOCS -->

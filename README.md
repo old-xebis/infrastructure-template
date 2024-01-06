@@ -101,7 +101,12 @@ Creates one machine for development and testing environments, or intentionally z
 - `xebis.ansible.fail2ban`: Fail2ban service - installs `fail2ban` and sets it up as a systemd service
 - `xebis.ansible.iam`: IAM - creates user groups and users as regular users or admins, their public SSH keys, disables password remote logins, provides `Restart sshd` handler, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
 - `xebis.ansible.bash`:Extensible Bash - installs `~/.bash_aliases` and sets up basic extensible Bash aliases, see [GitHub: xebis/xebis-ansible-collection/README.md](https://github.com/xebis/xebis-ansible-collection/blob/main/README.md) for usage, configuration, and examples
+- `xebis.ansible.starship`: Starship CLI prompt - Installs `starship` and sets up improved PowerLine configuration
 - `xebis.ansible.admin`: Administration essentials - installs and sets up `at`, `curl`, `htop`, `mc`, `screen`
+
+Each machine uses [LabLabs RKE2 Ansible Role](https://github.com/lablabs/ansible-role-rke2):
+
+- `lablabs.rke2`: Ansible Role to install RKE2 Kubernetes.
 
 ### Caveats
 
@@ -183,8 +188,8 @@ terraform init -reconfigure \
 ```
 
 - Create or update environment by `terraform apply` or `terraform apply -auto-approve`
-- Get server IP address by `terraform output hcloud_server_test_ipv4_address`
-- Direct SSH by `ssh user@$(terraform output -raw hcloud_server_test_ipv4_address)`
+- Get nodes IP addresses by `terraform output nodes_ipv4_addresses`
+- Direct SSH by `ssh user@$(terraform output -raw nodes_ipv4_addresses)`
 - Ansible:
   - Change to Ansible configuration directory `pushd ../ansible`
   - First replace `hcloud.yml` string `env-slug` with `$TF_VAR_ENV_SLUG`: `sed -i "s/env-slug/$TF_VAR_ENV_SLUG/" hcloud.yml`
@@ -205,7 +210,8 @@ Commit and push to run validations.
 
 ### Terraform Configuration Documentation
 
-See [Terraform/Docs/Terraform: `terraform/docs/tf.md`](terraform/docs/tf.md)
+- [Terraform Root module: `terraform/README.md`](terraform/README.md)
+  - [Terraform Nodes module: `terraform/modules/nodes/README.md`](terraform/modules/nodes/README.md)
 
 ## Contributing
 
@@ -325,6 +331,7 @@ bats tests
 - [jq: jq is a lightweight and flexible command-line JSON processor](https://stedolan.github.io/jq/)
 - [GitHub - xebis/repository-template: Well-manageable and well-maintainable repository template.](https://github.com/xebis/repository-template) - contains GitLab CI/CD, set of useful scripts, `pre-commit`, `semantic-release`, and `Visual Studio Code` suggested extensions
 - [GitHub - xebis/xebis-ansible-collection: A collection of Xebis shared Ansible roles.](https://github.com/xebis/xebis-ansible-collection)
+- [GitHub - lablabs/ansible-role-rke2: Ansible Role to install RKE2 Kubernetes.](https://github.com/lablabs/ansible-role-rke2) and [Ansible Galaxy - lablabs.rke2](https://galaxy.ansible.com/ui/standalone/roles/lablabs/rke2/)
 
 ### Recommendations
 
